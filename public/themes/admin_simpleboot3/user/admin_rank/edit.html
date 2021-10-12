@@ -1,0 +1,98 @@
+<include file="public@new_header"/>
+
+</head>
+<body>
+	<div class="layui-fluid">
+	    <div class="layui-card">
+	        <div class="layui-tab layui-tab-brief">
+	          <ul class="layui-tab-title">
+	            <li><a href="{:url('user/AdminRank/index')}">会员等级</a></li>
+				<li><a href="{:cmf_url('user/AdminRank/add')}">添加等级</a></li>
+	            <li class="layui-this"><a target="_self">编辑等级</a></li>
+	          </ul>
+	        </div>
+	 		
+			<form class="layui-form  js-ajax-form" action="{:url('AdminRank/edit')}" method="post">
+				<input type="hidden" name="id" value="{$data.id}" />
+				  <div class="layui-card-body" style="padding: 15px;">
+					<div class="layui-tab">
+						
+						<div class='layui-col-md6'>
+							<div class="layui-tab-item layui-show">
+							  <div class="layui-form-item">
+									<label class="layui-form-label">名称</label>
+									<div class="layui-input-inline">
+										<input type="text" name="rank_name" value="{$data.rank_name}" placeholder="请输入名称" class="layui-input">
+									</div>
+							  </div>
+							  <div class="layui-form-item">
+									<label class="layui-form-label">等级</label>
+									<div class="layui-input-inline">
+										<input type="number" name="user_level"  value="{$data.user_level}" class="layui-input">
+									</div>
+							  </div>
+							  <div class="layui-form-item">
+									<label class="layui-form-label">积分</label>
+									<div class="layui-input-inline">
+										<input type="text" name="level_integral" value="{$data.level_integral}" placeholder="¥" class="layui-input">
+									</div>
+							  </div>
+							  <div class="layui-form-item">
+							    <label class="layui-form-label">显示</label>
+							    <div class="layui-input-block">
+							      <input type="checkbox" name="status" value="1" lay-skin="switch" <eq name='$data.status' value='1'>checked</eq> lay-text="是|否">
+							    </div>
+							  </div>
+							  <div class="layui-form-item">
+							    <label class="layui-form-label">图片</label>
+							    <div class="layui-input-block">
+							    	<input type="hidden" name="thumbnail" id="thumb" value="{$data.thumbnail}">
+							    	<a href="javascript:uploadOneImage('图片上传','#thumb');">
+							  		<img src="<empty name='$data.thumbnail'>__TMPL__/public/assets/images/default-thumbnail.png<else>{:cmf_get_image_url($data.thumbnail)}</empty>" id="thumb-preview" width="135" style="cursor: hand" />
+							  	</a>
+							      <input type="button" class="btn btn-small" onclick="$('#thumb-preview').attr('src','__TMPL__/public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
+							    </div>
+							  </div>
+							  <div class="layui-form-item">
+							    <label class="layui-form-label">图标</label>
+							    <div class="layui-input-block">
+							    	<input type="hidden" name="small_thumb" id="small_thumb" value="{$data.small_thumb}">
+							    	<a href="javascript:uploadOneImage('图片上传','#small_thumb');">
+							  		<img src="<empty name='$data.small_thumb'>__TMPL__/public/assets/images/default-thumbnail.png<else>{:cmf_get_image_url($data.small_thumb)}</empty>" id="small_thumb-preview" width="135" style="cursor: hand" />
+							  	</a>
+							      <input type="button" class="btn btn-small" onclick="$('#small_thumb-preview').attr('src','__TMPL__/public/assets/images/default-thumbnail.png');$('#small_thumb').val('');return false;" value="取消图片">
+							    </div>
+							  </div>
+							  
+							  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">描述</label>
+							    <div class="layui-input-block">
+							      <textarea name="remark" placeholder="" class="layui-textarea">{$data.remark}</textarea>
+							    </div>
+							  </div>
+							  
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item layui-layout-admin">
+						<div class="layui-input-block">
+						  <div class="layui-footer" style="left: 0;">
+							<button class="layui-btn js-ajax-submit" >立即提交</button>
+						  </div>
+						</div>
+					</div>
+		        
+		      </div>
+	      </form>
+	    </div>
+	</div>
+	<include file="public@scripts"/>
+	<script src="__STATIC__/js/layui/layui.js"></script>
+	<script>
+		layui.use(['form'], function(){
+		  var form = layui.form
+		})
+	</script>
+	
+</body>
+</html>

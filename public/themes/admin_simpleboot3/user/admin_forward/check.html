@@ -1,0 +1,73 @@
+<include file="public@header"/>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    
+    <form action="{:url('AdminForward/editPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="tabbable">
+            <div class="tab-content">
+                
+                <div class="form-group">
+                    <label for="input-site-name" class="col-sm-2 control-label">提现单状态</label>
+                    <div class="col-md-6 col-sm-10">
+                        <switch name="data.status">
+                            <case value="FAIL">
+                                <span class="label label-warning">提现失败</span>
+                            </case>
+                            <case value="SUCCESS">
+                                <span class="label label-success">提现成功</span>
+                            </case>
+                            <case value="CREATE_SUCCESS">
+                                <span class="label label-danger">受理成功</span>
+                            </case>
+                            <case value="REFUND">
+                                <span class="label label-warning">提现退票</span>
+                            </case>
+                            <case value="CLOSE">
+                                <span class="label label-warning">关单</span>
+                            </case>
+                            <case value="INIT">
+                                <span class="label label-warning">业务单已创建</span>
+                            </case>
+                        </switch>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-site-name" class="col-sm-2 control-label">提现金额</label>
+                    <div class="col-md-6 col-sm-10">
+                        {$data.amount/100} 元
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-site-name" class="col-sm-2 control-label">发起提现时间</label>
+                    <div class="col-md-6 col-sm-10">
+                        {$data.create_time}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-site-name" class="col-sm-2 control-label">提现状态更新时间</label>
+                    <div class="col-md-6 col-sm-10">
+                        {$data.update_time}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-site-name" class="col-sm-2 control-label">入账银行账号后四位</label>
+                    <div class="col-md-6 col-sm-10">
+                        {$data.account_number}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-site-name" class="col-sm-2 control-label">入账银行</label>
+                    <div class="col-md-6 col-sm-10">
+                        {$data.account_bank}
+                    </div>
+                </div>
+                
+               
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>留言列表</title>
+    <meta name="description" content="留言列表">
+    <meta name="keywords" content="留言列表">
+</head>
+<body>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+          
+            <div class="container-fluid">
+            
+                <div class="row">
+                   <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body wrap js-check-wrap">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a href="{:cmf_plugin_url('HzMsgBorad://AdminIndex/index')}">申请列表</a></li>
+                                </ul>
+                                <div class="common-form margin-top-20">
+                                    <form method="post" class="js-ajax-form" action="#">
+                                        <div class="table-responsive table_list">
+                                            <table width="100%" class="table table-hover table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th width="100">店铺名称</th>
+                                                	<th>店铺地址</th>
+                                                	<th>老板名称</th>
+                                                    <th width="150">联系电话</th>
+                                                    <th>合作类型</th>
+                                                    <th width="200">提交时间</th>
+                                                    <th width="200">操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <foreach name="datas" item="vo">
+                                                    <tr>
+                                                        <td>{$vo.title}</td>
+                                                        <td>{$vo.address}</td>
+                                                        <td>{$vo.name}</td>
+                                                		<td>{$vo.phone}</td>
+                                                		<td>{$vo.type_name}</td>
+                                                        <td>{:date('Y-m-d H:i:s',$vo.createtime)}</td>
+                                                        <td>
+                                                            <a class="btn btn-xs btn-warning js-ajax-dialog-btn" href="{:cmf_plugin_url('HzMsgBorad://AdminIndex/delete',array('id'=>$vo['id']))}"
+                                                               data-msg="确定删除吗？">删除</a>
+                                                        </td>
+                                                    </tr>
+                                                </foreach>
+                                                </tbody>
+                                            </table>
+                                            <ul class="pagination">{$page|default=''}</ul>
+                                        </div>
+                                    </form>
+                                </div>
+                                <include file="public/scripts"/>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

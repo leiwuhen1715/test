@@ -1,0 +1,131 @@
+<include file="public@new_header"/>
+<link href="__TMPL__/public/assets/simpleboot3/css/theme.min.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/simpleboot3/css/style.css" rel="stylesheet">
+<style type="text/css">
+	body{line-height:30px;}
+	td, th{padding:6px;}
+</style>
+</head>
+<body>
+	<div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-brief">
+              <ul class="layui-tab-title">
+                <li>
+                  <a href="{:url('index')}">订单列表</a>
+                </li>
+                <li class="layui-this">
+                  <a>查看订单</a>
+                </li>
+              </ul>
+            </div>
+            <div class="wrap js-check-wrap" style='padding: 5px 10px'>
+				<div class="order-box">
+					<h4 class="well">基本信息</h4>
+					<table style="width:100%;" border="0" cellspacing="1" cellpadding="6">
+						<tr>
+							<th align="right" width=300>订单号：</th>
+							<td>{$order.order_sn}</td>
+							<th align="right" width=300>订单状态：</th>
+							<td>
+								{$order_status[$order.order_status]}
+							</td>
+						</tr>
+						<tr>
+							<th align="right" width=300>会员：</th>
+							<td>{$order.user_nickname}</td>
+							<th align="right" width=300>下单时间：</th>
+							<td>{:date('Y-m-d H:i',$order.add_time)}</td>
+						</tr>
+						<tr>
+							<th align="right" width=300>提交时间：</th>
+							<td><notempty name="order.sub_time">{:date('Y-m-d H:i',$order.sub_time)}</notempty></td>
+							<th align="right" width=300>确认时间：</th>
+							<td><notempty name="order.con_time">{:date('Y-m-d H:i',$order.con_time)}</notempty></td>
+						</tr>
+					</table>
+					<h4 class="well">商家信息</h4>
+					<table style="width:100%;" border="0" cellspacing="1" cellpadding="6">
+						<tr>
+							<th align="right" width=300>名称：</th>
+							<td colspan=3>{$order.supplier_name}</td>
+						</tr>
+						<tr>
+							<th align="right" width=300>平台：</th>
+							<td><eq name='order.plat_type' value='1'>饿了么</eq><eq name='order.plat_type' value='2'>美团</eq></td>
+							<th align="right" width=300>类型：</th>
+							<td><eq name='order.prome_type' value='1'>霸王餐</eq><eq name='order.prome_type' value='2'>返利餐</eq></td>
+						</tr>
+						<tr>
+							<th align="right" width=300>支付金额：</th>
+							<td>{$order.max_price}</td>
+							<th align="right" width=300>满返金额：</th>
+							<td>{$order.ret_price}（会员：{$order.ret_vip_price}）</td>
+						</tr>
+						<tr>
+							<th align="right" width=300>商家要求：</th>
+							<td colspan=3>{$order.description}</td>
+						</tr>
+					</table>
+					
+					<in name='order.order_status' value='1,2'>
+						<h4 class="well">审核信息</h4>
+						<table style="width:100%;" border="0" cellspacing="1" cellpadding="6">
+							<tr>
+								<th align="right" width=300>订单编号：</th>
+								<td>{$order.other_order_sn}</td>
+								<th align="right" width=300>支付金额：</th>
+								<td>{$order.other_order_amount}</td>
+							</tr>
+							<tr>
+								<th align="right" width=300>订单图片：</th>
+								<td colspan=3>
+									<php>$pay_img = explode(',',$order['pay_img']);</php>
+									<foreach name='pay_img' item='vo'>
+										<a href="javascript:imagePreviewDialog('{:cmf_get_image_url($vo)}');"><img src='{:cmf_get_image_url($vo)}' style='height:100px'></a>
+									</foreach>
+								</td>
+							</tr>
+							<eq name='order.prome_type' value='1'>
+								<tr>
+									<th align="right" width=300>评论图片：</th>
+									<td colspan=3>
+										<php>$com_img = explode(',',$order['com_img']);</php>
+										<foreach name='com_img' item='vo'>
+											<a href="javascript:imagePreviewDialog('{:cmf_get_image_url($vo)}');"><img src='{:cmf_get_image_url($vo)}' style='height:100px'></a>
+										</foreach>
+									</td>
+								</tr>
+							</eq>
+						</table>
+					</in>
+					<h4 class="well">操作</h4>
+					<form class="js-ajax-form" action="" method="post">
+					<table style="width:100%;" border="0" cellspacing="1" cellpadding="6">
+						<tr>
+							<th align="right" width="200">操作备注：</th>
+							<td>
+								<textarea name="note" id="" style="width:500px;height:50px;"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<th align="right" width="200">当前可执行操作：</th>
+							<td>
+								<eq name='order.order_status' value='1'>
+								    <button type="submit" class="btn btn-primary js-ajax-submit" data-action="{:url('orderOperate',['id'=>$order.order_id])}" style="margin-right:10px;">确认完成</button>
+								    <button type="submit" class="btn btn-primary js-ajax-submit" data-action="{:url('noOperate',['id'=>$order.order_id])}" style="margin-right:10px;">审核失败</button>
+								</eq>
+								<button type="button" class="btn" onclick="history.back(-1)">返回</button>
+							</td>
+						</tr>
+					</table>
+					</form>
+					
+				</div>
+			</div>
+        </div>
+    </div>
+	
+	<include file="public@scripts"/>
+</body>
+</html>

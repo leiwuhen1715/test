@@ -1,0 +1,79 @@
+<include file="public@new_header"/>
+</head>
+<body>
+	<div class="layui-fluid">
+	    <div class="layui-card">
+	        <div class="layui-tab layui-tab-brief">
+	          <ul class="layui-tab-title">
+	            <li class="layui-this"><a href="{:url('user/AdminTicket/index')}">会员卡列表</a></li>
+				<li><a href="{:cmf_url('user/admin_group_card/index')}" target="_self">会员卡类型</a></li>
+				
+	          </ul>
+	        </div>
+	 		<div class="card-body js-check-wrap">
+	          	<form class="layui-form form-inline margin-top-20" method="get" action="{:url('user/AdminTicket/index')}">
+	                <div class="demoTable layui-form-item layui-card-header layuiadmin-card-header-auto">
+	                  搜索：
+	                  <div class="layui-inline">
+	                    <input type="text" class="layui-input" name='keyword'
+	                         value="{:input('request.keyword')}" placeholder="用户手机/昵称">
+	                  </div>
+	                  <div class="layui-inline">
+	                     <select  class="layui-input" name="type_id">
+	                        <option value="">类型</option>
+	                        <foreach name="type_list" item="vo">
+	                        	<option value="{$vo.id}" <eq name='type_id' value='$vo.id'>selected</eq>>{$vo.title}</option>
+	                        </foreach>
+	                     </select>
+	                  </div>
+	
+	                  <button type='submit' class="layui-btn">搜索</button>
+	                </div>
+	           	</form>
+	
+	          <div class="layui-card-body table-responsive">
+				<form method="post" class="js-ajax-form" action="{:url('AdminTicket/listOrder')}">
+					
+					<table class="layui-table" style="margin: 0">
+						<thead>
+							<tr>
+								<th>ID</th>	
+								<th>会员</th>
+								<th>电话</th>	
+								<th>类型</th>
+								<th>开始时间</th> 						
+								<th>结束时间</th>
+								<!--th>操作</th-->
+							</tr>
+						</thead>
+						<tbody>
+							<foreach name="list" item="vo">
+								<tr>
+				                    <td>{$vo.id}</td>
+				                    <td>{$vo.user_nickname}</td>
+				                    <td>{$vo.mobile}</td>
+				                    <td>{$vo.card_name}</td>
+				                    <td>{:date('Y-m-d H:i:s',$vo['add_time'])}</td>
+				                    <td>{:date('Y-m-d H:i:s',$vo['end_time'])}</td>
+									<!--<td>
+										<a href="{:cmf_url('adminTicket/edit',['id'=>$vo.id])}">修改</a>
+									</td>-->
+								</tr>
+							</foreach>
+						</tbody>
+					</table>
+					<ul class='pagination'>{$page}</ul>
+				</form>
+	          </div>
+	        </div>
+	    </div>
+	</div>
+	<script src="__STATIC__/js/admin.js"></script>
+	<script src="__STATIC__/js/layui/layui.js"></script>
+	<script>
+	    layui.use(['form'], function(){
+	      var form = layui.form;
+	    })
+	</script>
+</body>
+</html>

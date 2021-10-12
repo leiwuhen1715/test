@@ -1,0 +1,73 @@
+<include file="public@new_header"/>
+</head>
+<body>
+	<div class="layui-fluid">
+	    
+	    <div class="layui-card">
+	        <div class="layui-tab layui-tab-brief">
+				<ul class="layui-tab-title">
+                    <li><a href="{:url('AdminSupplier/index')}">商家列表</a></li>
+    				<li><a href="{:url('AdminSupplier/add')}">添加商家</a></li>
+    				<li class="layui-this"><a href="{:url('AdminSupplier/bill')}">对账单</a></li>
+                </ul>
+			</div>
+
+	   	  <form action="{:url('goods/index/index')}" class="layui-form" method="get" target="_blank">
+		      <div class="layui-card-body" style="padding: 15px;">
+		      	<div class="layui-tab ">
+			      	
+			        <div class='layui-col-md6'>
+				        <div class="layui-tab-item layui-show">
+				          
+				          <div class="layui-form-item">
+				            <label class="layui-form-label">商家</label>
+				            <div class="layui-input-inline">
+				            	<select name="id" lay-search lay-filter="select" lay-verify="required">
+				            	    <option value="">直接选择或搜索选择</option>
+									<foreach name='supplier_list' item='vo'>
+									    <option value="{$vo.id}">{$vo.supplier_name}</option>
+									</foreach>
+								</select>
+								<input type='hidden' name='supplier_name'>
+				            </div>
+				          </div>
+				          <div class="layui-form-item">
+				            <label class="layui-form-label">时期</label>
+				            <div class="layui-input-inline">
+				              <input type="text" name="date" lay-verify="required" autocomplete="off" placeholder="请选择时间" class="layui-input" id='date'>
+				            </div>
+				          </div>
+				          <div class="layui-form-item">
+            		            <div class="layui-input-block">
+            		                <button class="layui-btn" lay-submit="">确定</button>
+            		            </div>
+            		        </div>
+		        
+				        </div>
+			        </div>
+			        <div class="layui-form-item"></div>
+			    </div>
+		        
+		      </div>
+	      </form>
+	    </div>
+	</div>
+	<script src="__STATIC__/js/admin.js"></script>
+	<script src="__STATIC__/js/layui/layui.js"></script>
+	<script>
+		layui.use(['form','laydate'], function(){
+		    var form = layui.form,laydate=layui.laydate;
+		  
+		    form.on('select(select)', function(data){
+		        var supplier_name = $(data.elem).find("option:selected").text()
+		        $('input[name="supplier_name"]').val(supplier_name);
+            });
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#date' //指定元素
+            });
+		})
+	</script>
+	
+</body>
+</html>

@@ -1,0 +1,50 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>开通记录</a></li>
+        <li><a href="{:cmf_url('adminTicket/list',['id'=>$user_id])}">消费记录</a></li>
+    </ul>
+    <form class="margin-top-20" method="post" >
+
+    </form>
+    <form method="post" class="js-ajax-form">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>类型</th>
+                <th>姓名</th>
+                <th>电话</th>
+                <th>开始时间</th>
+                <th>付款时间</th>
+                <th>{:lang('ACTIONS')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" item="vo">
+                <tr>
+                    <td>{$vo.goods_name}</td>
+                    <td>{$vo.realname}</td>
+                    <td>{$vo.mobile}</td>
+                    <td>{:date('Y-m-d H:i:s',$vo['add_time'])}</td>
+                    <td>
+                        <eq name='vo.pay_status' value='1'>
+                            {:date('Y-m-d H:i:s',$vo['pay_time'])}
+                        <else>
+                            <span class='label  label-danger'>未付款</span>
+                        </eq>
+                    </td>
+                    <td>
+                       <!-- <a href="{:cmf_url('adminTicket/edit',['id'=>$vo.id])}">修改</a> -->
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

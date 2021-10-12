@@ -1,0 +1,30 @@
+<div class="layui-form-item" id='list-{$html_id}'>
+    <div class="layui-inline">
+      <label class="layui-form-label">厂区</label>
+      <div class="layui-input-inline">
+        <input type="text" class="layui-input" name='factory[factory_name][]' placeholder="厂区名称">
+		<input  type="hidden" name='factory[id][]' value='0'>
+      </div>
+    </div>
+    <div class="layui-inline">
+		<label class="layui-form-label">全包</label>
+		<input type="text" class="layui-input" name='factory[all_price][]' placeholder="¥" style='width: 100px;'>
+    </div>
+    <div class="layui-inline">
+		<label class="layui-form-label">半包</label>
+        <input type="text" class="layui-input" name='factory[half_price][]' placeholder="¥" style='width: 100px;'>
+    </div>
+	<div class="layui-inline">
+		<label class="layui-form-label">单人</label>
+	    <input type="text" class="layui-input" name='factory[one_price][]' placeholder="¥" style='width: 100px;'>
+	</div>
+    <div class="layui-inline">
+      <label class="layui-form-label">人数</label>
+      <div class="layui-input-inline">
+        <input type="number" class="layui-input"  name='factory[people_num][]' placeholder="">
+      </div>
+    </div>
+	<div class="layui-inline">
+		<button type="button" class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteX('list-{$html_id}')"><i class="layui-icon"></i></button>
+	</div>
+</div>

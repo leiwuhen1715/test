@@ -1,0 +1,80 @@
+<include file="public@new_header"/>
+</head>
+<body>
+	<div class="layui-fluid">
+	    
+	    <div class="layui-card">
+	        <div class="layui-tab layui-tab-brief">
+				<ul class="layui-tab-title">
+					<li><a href="{:url('AdminIndex/index')}">会员列表</a></li>
+					<li class="layui-this"><a>编辑会员</a></li>
+				</ul>
+			</div>
+
+	   	  <form action="{:url('AdminIndex/edit')}" class="layui-form js-ajax-form" method="post">
+	      	<div class="layui-card-body layui-row" style="padding: 15px;">
+	      		
+		        <div class='layui-col-md6'>
+			          <div class="layui-form-item">
+			            <label class="layui-form-label">用户名</label>
+			            <div class="layui-input-block">
+			              <input type="text" name="post[user_login]" readonly class="layui-input" value='{$data.user_login}'>
+			            </div>
+			          </div>
+			          <div class="layui-form-item">
+			            <label class="layui-form-label">真实姓名</label>
+			            <div class="layui-input-block">
+			              <input type="text" name="post[realname]"  placeholder="" class="layui-input" value='{$data.realname}'>
+			            </div>
+			          </div>
+			          <div class="layui-form-item">
+			            <label class="layui-form-label">手机</label>
+			            <div class="layui-input-block">
+			              <input type="text" name="post[mobile]"  readonly class="layui-input" value='{$data.mobile}'>
+			            </div>
+			          </div>
+			          <div class="layui-form-item">
+			            <label class="layui-form-label">电子邮箱</label>
+			            <div class="layui-input-block">
+			              <input type="text" name="post[user_eamil]"  readonly class="layui-input" value='{$data.user_email}'>
+			            </div>
+			          </div>
+			          
+			          <div class="layui-form-item">
+			            <label class="layui-form-label">修改密码</label>
+			            <div class="layui-input-inline">
+			              <input type="password" name="password"  placeholder="密码" class="layui-input" value=''>
+			            </div>
+						<div class="layui-input-inline">
+						  <input type="password" name="conpassword"  placeholder="确认密码" class="layui-input" value=''>
+						</div>
+			          </div>
+			          
+		        </div>
+				<div class='layui-col-md6'>
+				   
+				      
+				      
+				</div>
+				<div class="layui-form-item layui-layout-admin">
+				    <div class="layui-input-block">
+				      <div class="layui-footer" style="left: 0;">
+						<input type="hidden" name='id' value='{$data.id}'>
+				        <button class="layui-btn js-ajax-submit" >立即提交</button>
+				      </div>
+				    </div>
+				</div>
+	      	</div>
+	      </form>
+	    </div>
+	</div>
+	<include file="public@scripts"/>
+	<script src="__STATIC__/js/layui/layui.js"></script>
+	<script>
+		layui.use(['form'], function(){
+		  var form = layui.form
+		})
+	</script>
+	
+</body>
+</html>

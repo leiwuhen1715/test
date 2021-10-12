@@ -1,0 +1,75 @@
+<include file="public@header"/>
+<link href="__TMPL__/public/assets/simpleboot3/css/theme.min.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/simpleboot3/css/style.css" rel="stylesheet">
+<style type="text/css">
+	body{line-height:30px;}
+	td, th{padding:6px;}
+</style>
+</head>
+<body>
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:url('adminGroupCard/index')}">分组列表</a></li>
+			<li class="active"><a href="javascript:;">编辑分组</a></li>
+		</ul>
+		<form class="form-horizontal js-ajax-form" action="{:url('adminGroupCard/groupadd')}" method="post">
+
+			<div class="tabbable">
+				<div class="tab-content">
+					<div class="tab-pane active" >
+						<fieldset>
+
+							<div class="control-group">
+								<label class="control-label">名称</label>
+								<div class="controls">
+									<input type="text" name="title" value="" required><span class="form-required">*</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">价格</label>
+								<div class="controls">
+									<input type="text" name="price" value="" required><span class="form-required">*</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">图片</label>
+								<div class="controls">
+	                                <input type="hidden" name="thumbnail" id="thumbnail" value="">
+	                                <a href="javascript:uploadOneImage('图片上传','#thumbnail');">
+	                                    <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+	                                         id="thumbnail-preview"
+	                                         width="135" style="cursor: pointer"/>
+	                                </a>
+	                                <input type="button" class="btn btn-sm btn-cancel-thumbnail" value="取消图片">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">显示</label>
+								<div class="controls">
+	                                <select name="status" id="" style="width:50px;">
+										<option value="1">是</option>
+										<option value="0">否</option>
+									</select>
+								</div>
+							</div>
+						</fieldset>
+					</div>
+					<button type="submit" class="btn btn-primary js-ajax-submit" style="margin-left: 180px;">提交</button>
+
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+	<script type="text/javascript">
+		$(function () {
+
+	        $('.btn-cancel-thumbnail').click(function () {
+	            $('#thumbnail-preview').attr('src', '__TMPL__/public/assets/images/default-thumbnail.png');
+	            $('#thumbnail').val('');
+	        });
+
+	    });
+	</script>
+</body>
+</html>

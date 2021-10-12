@@ -1,0 +1,126 @@
+<include file="public@new_header"/>
+</head>
+
+<body>
+
+	<div class="layui-fluid">
+	    
+	    <div class="layui-card">
+	      <div class="layui-tab layui-tab-brief">
+	          <ul class="layui-tab-title">
+	            <li><a href="{:url('AdminTime/index')}">课时列表</a></li>
+	            <li><a href="{:url('AdminTime/add')}">添加课时</a></li>
+	            <li class="layui-this"><a>编辑课时</a></li>
+	          </ul>
+	      </div>
+	   	  <form action="{:url('goods/AdminTime/edit')}" class="layui-form js-ajax-form" method="post">
+	      <div class="layui-card-body" style="padding: 15px;">
+				<div class="layui-tab layui-tab-card">
+					<ul class="layui-tab-title">
+						<li class="layui-this">通用信息</li>
+					</ul>
+				
+					<div class='layui-tab-content'>
+						<div class="layui-tab-item layui-show">
+						  <div class="layui-form-item">
+								<label class="layui-form-label">课程</label>
+								<div class="layui-input-inline">
+									<select name="post[goods_id]" lay-search="">
+										<option value="">直接选择或搜索选择</option>
+										<foreach name='goods_list' item='vo'>
+											<option value='{$vo.goods_id}' <eq name='$vo.goods_id' value='$data.goods_id'>selected</eq>>{$vo.goods_name}</option>
+										</foreach>
+										
+									</select>
+								</div>
+						  </div>
+						  <div class="layui-form-item">
+								<label class="layui-form-label">教练</label>
+								<div class="layui-input-inline">
+									<select name="post[coach_id]" lay-search="">
+										<option value="">直接选择或搜索选择</option>
+										<foreach name='user_coach' item='vo'>
+											<option value='{$vo.id}' <eq name='$vo.id' value='$data.coach_id'>selected</eq>>{$vo.user_nickname}</option>
+										</foreach>
+									</select>
+								</div>
+						  </div>
+						  <div class="layui-form-item">
+							<label class="layui-form-label">上课时间</label>
+							<div class="layui-input-inline">
+							  <input type="text" name="post[start_time]" id='start_time' placeholder="日期" class="layui-input" value='{:date("Y-m-d",$data.start_time)}'>
+							</div>
+							<div class="layui-input-inline">
+							  <input type="text" name="post[end_time]" id='end_time'  placeholder="时间" class="layui-input" value='{:date("H:i:s",$data.start_time)} - {:date("H:i:s",$data.end_time)}'>
+							</div>
+						  </div>
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">人数</label>
+						    <div class="layui-input-inline">
+						      <input type="number" name="post[people_num]" placeholder="请输入人数" class="layui-input" value='{$data.people_num}'>
+						    </div>
+						  </div>
+						  <div class="layui-form-item">
+							<label class="layui-form-label">课程价格</label>
+							<div class="layui-input-inline">
+							  <input type="number" name="post[shop_price]" placeholder="请输入课程名称" class="layui-input" value='{$data.shop_price}'>
+							</div>
+						  </div>
+						  <div class="layui-form-item">
+							<label class="layui-form-label">会员价格</label>
+							<div class="layui-input-inline">
+							  <input type="number" name="post[member_price]" placeholder="请输入课程名称" class="layui-input" value='{$data.member_price}'>
+							</div>
+						  </div>
+						  
+						  <div class="layui-form-item">
+							<label class="layui-form-label">显示</label>
+							<div class="layui-input-block">
+							  <input type="checkbox" name="post[is_on_sale]" value="1" lay-skin="switch" <eq name='1' value='$data.is_on_sale'>checked</eq> lay-text="是|否">
+							</div>
+						  </div>
+						</div>
+					</div>
+				</div>
+		        <div class="layui-form-item layui-layout-admin">
+		            <div class="layui-input-block">
+		              <div class="layui-footer" style="left: 0;">
+		              	<input type="hidden" name='post[id]' value='{$data.id}'>
+		              	<input type="hidden" name='id' value='{$data.id}'>
+		                <button class="layui-btn js-ajax-submit" >立即提交</button>
+		                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		              </div>
+		            </div>
+		        </div>
+	        
+	      	</div>
+	      </form>
+	    </div>
+	</div>
+
+
+	<script src="__STATIC__/js/layui/layui.js"></script>
+	<script>
+		
+		layui.use(['form','table','laydate'], function(){
+			var form = layui.form
+			,laydate = layui.laydate
+			,table = layui.table;
+			//常规用法
+		    laydate.render({
+		      elem: '#start_time',
+			  trigger: 'click',
+		    });
+			//时间范围
+			  laydate.render({
+			    elem: '#end_time'
+			    ,type: 'time'
+			    ,range: true
+				,trigger: 'click',
+			  });
+		});
+	</script>
+	<script src="__STATIC__/js/admin.js"></script>
+
+</body>
+</html>

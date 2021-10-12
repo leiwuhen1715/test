@@ -1,0 +1,90 @@
+<include file="public@new_header"/>
+</head>
+<body>
+	<div class="layui-fluid">
+	    <div class="layui-card">
+	        <div class="layui-tab layui-tab-brief">
+	          <ul class="layui-tab-title">
+	            <li class="layui-this"><a href="{:url('user/AdminForward/index')}">提现列表</a></li>
+	          </ul>
+	        </div>
+	 		<div class="card-body js-check-wrap">
+	 		
+    
+			  <form class="layui-form form-inline margin-top-20" method="post" action="{:url('user/AdminForward/index')}">
+                 <div class="demoTable layui-form-item layui-card-header layuiadmin-card-header-auto" style='margin-bottom: 10px'>
+	                  搜索：
+	                  <div class="layui-inline">
+	                    <input type="text" class="layui-input" id="title" name='keyword' value="{:input('request.keyword')}"
+               placeholder="用户名/昵称/邮箱/手机">
+	                  </div>
+	                  <div class="layui-inline">
+	                    <select class="form-control" name="status">
+				            <option value="-1">全部</option>
+				            <option value="0">未处理</option>
+				            <option value="1">已处理</option>
+				            <option value="2">已驳回</option>
+				        </select>
+	                  </div>
+	                  <button type='submit' class="layui-btn" lay-submit >搜索</button>
+	              </div>
+              </form>
+	          <div class="layui-card-body table-responsive">
+					
+					<table class="layui-table" style="margin: 0">
+						<thead>
+							<tr>
+								<th>ID</th>
+				                <th>{:lang('USERNAME')}</th>
+				                <th>金额</th>
+				                <th>申请日期</th>
+				                <th>{:lang('STATUS')}</th>
+				                <th>{:lang('ACTIONS')}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<php>
+				                $statuses=array("0"=>'未处理',"1"=>'已处理',"2"=>'已驳回');
+				            </php>
+				            <foreach name="list" item="vo">
+				                <tr>
+				                    <td>{$vo.id}</td>
+				                    <td>{$vo['user_nickname']?$vo['user_nickname']:($vo['mobile']?$vo['mobile']:lang('THIRD_PARTY_USER'))}
+				                    </td>
+				                    <td>{$vo.order_amount}</td>
+				                    <td>{:date('Y-m-d H:i:s',$vo['add_time'])}</td>
+				                    <td>
+				                  		<switch name="vo.pay_status">
+				                            <case value="0">
+				                                <span class="label label-warning">{$statuses[$vo['pay_status']]}</span>
+				                            </case>
+				                            <case value="1">
+				                                <span class="label label-success">{$statuses[$vo['pay_status']]}</span>
+				                            </case>
+				                            <case value="2">
+				                                <span class="label label-danger">{$statuses[$vo['pay_status']]}</span>
+				                            </case>
+				                        </switch>
+				                  	</td>
+				                    <td>
+				                        <a href="{:url('user/adminForward/edit',['id'=>$vo['id']])}" >操作</a>
+				                    </td>
+				                </tr>
+				            </foreach>
+						</tbody>
+					</table>
+					<ul class='pagination'>{$page}</ul>
+	          </div>
+	        </div>
+			
+	    </div>
+	</div>
+	<script src="__STATIC__/js/layui/layui.js"></script>
+	<script src="__STATIC__/js/admin.js"></script>
+	<script>
+	    layui.use(['form'], function(){
+	      var form = layui.form
+	    })
+    </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<include file="public@new_header"/>
+</head>
+<body>
+
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-brief">
+              <ul class="layui-tab-title">
+                <li class="layui-this">
+                  <a href="{:url('AdminSupplier/index')}">商家列表</a>
+                </li>
+				<li><a href="{:url('AdminSupplier/add')}">添加商家</a></li>
+				<li><a href="{:url('AdminSupplier/bill')}">对账单</a></li>
+              </ul>
+            </div>
+
+            <div class="card-body js-check-wrap">
+              <form class="layui-form form-inline margin-top-20" method="post" action="">
+                <div class="demoTable layui-form-item layui-card-header layuiadmin-card-header-auto" style='margin-bottom: 10px'>
+                  搜索：
+                  <div class="layui-inline">
+                    <input type="text" class="layui-input" id="title" name='title'
+                         value="" placeholder="商家名称">
+                  </div>
+                  <div class="layui-inline">
+                     <select  class="layui-input" name="status" id="status">
+                         <option value="">状态</option>
+                         <option value="1">显示</option>
+                         <option value="0">隐藏</option>
+                     </select>
+                  </div>
+				  <div class="layui-inline">
+				     <select  class="layui-input" name="plat_type">
+				         <option value="">平台</option>
+				         <option value="1">饿了么</option>
+				         <option value="0">美团</option>
+				     </select>
+				  </div>
+				  <div class="layui-inline">
+				     <select  class="layui-input" name="prome_type">
+				         <option value="">类型</option>
+				         <option value="1">霸王餐</option>
+				         <option value="2">返利餐</option>
+				     </select>
+				  </div>
+
+                  <button type='button' class="layui-btn"  lay-submit lay-filter="LAY-app-order-search">搜索</button>
+              </div>
+
+              <div class="layui-card-body table-responsive">
+                  <table class="layui-hide" id="test" lay-filter="test"></table>
+              </div>
+              </form>
+            </div>
+        </div>
+    </div>
+          
+        
+ <script src="__STATIC__/js/layui/layui.js"></script>
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="switchTpl">
+  <input type="checkbox" name="sex" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="sexDemo" {{ d.status == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="switchTpl1">
+  <input type="checkbox" name="sex" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="sexDemo1" {{ d.recommend == 1 ? 'checked' : '' }}>
+</script>
+
+<script type="text/html" id="test-table-totalRow-toolbarDemo">
+  <!-- <div class="layui-btn-container">
+    <button type='button' class="layui-btn layui-btn-sm layui-btn-normal" lay-event="getCheckData"><i class="layui-icon"></i>删除</button>
+  </div> -->
+</script>
+<script>
+
+    layui.use(['form','table'], function(){
+      var form = layui.form
+      ,layer = layui.layer
+      ,table = layui.table;
+
+      table.render({
+        elem: '#test'
+        ,url:"{:cmf_url('AdminSupplier/ajax')}"
+        ,toolbar:"#test-table-totalRow-toolbarDemo"
+        ,cols: [[
+          {field:'id', type: 'checkbox'}
+          ,{field:'id', width:80, title: 'ID', sort: true}
+          ,{field:'supplier_name', title: '商家名称'}
+		  ,{field:'plat_name', width:110,title: '平台'}
+		  ,{field:'prom_name', width:110,title: '类型'}
+          ,{field:'contact_user', width:110, title: '联系人'}
+          ,{field:'contact_address',width:150, title: '地址'}
+          ,{field:'contact_phone', width:130, title: '手机号'}
+          ,{field:'add_time',  width:210,title: '提交时间', sort: true}
+          ,{field:'recommend',  title: '推荐',width:80, templet: '#switchTpl1', unresize: true}
+          ,{field:'status',  title: '审核',width:80, templet: '#switchTpl', unresize: true}
+          ,{fixed:'right', title:'操作', toolbar: '#barDemo', width:150}
+        ]]
+        ,id: 'testReload'
+        ,page: true
+      });
+
+
+        //监听性别操作
+        form.on('switch(sexDemo)', function(obj){
+
+            var status = obj.elem.checked?1:0;
+            $.ajax({
+                  type: "post",
+                  url: "{:cmf_url('AdminSupplier/changeVal')}",
+                  data: {id: this.value,field:'status',value:status},
+                  dataType: "json",
+                  success: function(data) {
+
+                  }
+              });
+
+        });
+        form.on('switch(sexDemo1)', function(obj){
+
+          var status = obj.elem.checked?1:0;
+          $.ajax({
+                type: "post",
+                url: "{:cmf_url('AdminSupplier/changeVal')}",
+                data: {id: this.value,field:'recommend',value:status},
+                dataType: "json",
+                success: function(data) {
+
+                }
+            });
+
+        });
+        
+        //头工具栏事件
+        table.on('toolbar(test)', function(obj){
+          var checkStatus = table.checkStatus(obj.config.id);
+
+          switch(obj.event){
+            case 'getCheckData':
+              var data = checkStatus.data;
+
+              var deletenum =[];
+              for(var i=0;i<data.length;i++){
+                deletenum.push(data[i].id)
+              }
+              if(deletenum.length < 1){
+                layer.msg('请选择内容');
+                return
+              }
+              layer.confirm('真的删除么？', function(index){
+                  $.ajax({
+                      type: "get",
+                      url: "{:cmf_url('AdminSupplier/delete_all')}",
+                      data: {"ids": deletenum},
+                      dataType: "json",
+                      success: function(data) {
+                          layer.close(index);
+                          table.reload('testReload', {
+                            page: {
+                              curr: 1 //重新从第 1 页开始
+                            }
+                          }, 'data');
+                      }
+                  });
+              });
+            break;
+            case 'getCheckLength':
+              var data = checkStatus.data;
+              layer.msg('选中了：'+ data.length + ' 个');
+            break;
+            case 'isAll':
+              layer.msg(checkStatus.isAll ? '全选': '未全选');
+            break;
+          };
+        });
+        //监听行工具事件
+        table.on('tool(test)', function(obj){
+
+            var data = obj.data;
+
+            if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+
+                    $.ajax({
+                        type: "get",
+                        url: "{:cmf_url('AdminSupplier/delete_all')}",
+                        data: {"ids": obj.data.id},
+                        dataType: "json",
+                        success: function(data) {
+                            obj.del();
+                            layer.close(index);
+                        }
+                    });
+                });
+            } else if(obj.event === 'edit'){
+                var id = obj.data.id
+                var href = "{:cmf_url('AdminSupplier/edit')}?id="+id
+                window.location.href = href
+            }
+        });
+		
+        //监听搜索
+        form.on('submit(LAY-app-order-search)', function(data){
+          var field = data.field;
+          
+          //执行重载
+          table.reload('testReload', {
+            where: field
+          });
+        });
+    });
+</script>
+
+
+  <script src="__STATIC__/js/admin.js"></script>
+
+
+</body>
+</html>

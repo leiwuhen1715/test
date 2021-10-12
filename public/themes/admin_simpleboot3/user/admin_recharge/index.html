@@ -1,0 +1,74 @@
+<include file="public@new_header"/>
+</head>
+<body>
+	<div class="layui-fluid">
+	    <div class="layui-card">
+	        <div class="layui-tab layui-tab-brief">
+	          <ul class="layui-tab-title">
+	            <li class="layui-this"><a href="{:url('user/AdminRecharge/index')}">充值管理</a></li>
+				<li><a href="{:cmf_url('user/AdminRecharge/add')}" target="_self">添加充值</a></li>
+	          </ul>
+	        </div>
+	 		<div class="card-body js-check-wrap">
+			<form method="post" class="js-ajax-form" action="{:url('AdminRecharge/listOrder')}">
+			  <div class="layui-table-tool" style="padding: 0;">
+			  	<div class="layui-btn-container">
+			  		<button type="submit" class="layui-btn layui-btn-sm js-ajax-submit" style='margin:10px'>排序</button>
+			  		<button type="submit" class="layui-btn layui-btn-sm layui-btn-normal js-ajax-submit" data-action="{:url('AdminRecharge/delete_all')}" data-msg="您确定删除吗？" style='margin:10px'><i class="layui-icon"></i>删除</button>
+			  	</div>
+			  </div>
+	          <div class="layui-card-body table-responsive">
+				
+					
+					<table class="layui-table" style="margin: 0">
+						<thead>
+							<tr>
+								<th width='30'>
+									<label>
+									   <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+									</label>
+								</th>
+								<th width='100'>排序</th>					
+								<th>名称</th>
+								<th>价格</th>
+								<th>金额</th>
+								<th>状态</th>						
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<foreach name="list" item="vo">
+								<tr>
+									<tr>
+										<td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$vo.id}" ></td>
+										<td><input name="list_orders[{$vo.id}]" class="layui-input" type="text" size="5" value="{$vo.list_order}"></td>
+				                    <td>{$vo.name}</td>
+				                    <td>{$vo.price}</td>
+									<td>{$vo.amount}</td>
+				                    <td>
+										<switch name="vo.status">
+										    <case value="0">
+										        <span class="label label-danger">不显示</span>
+										    </case>
+										    <case value="1">
+										        <span class="label label-success">显示</span>
+										    </case>
+										</switch>
+									</td>
+									<td>
+										<a class="btn btn-xs btn-primary" href="{:url('AdminRecharge/edit',['id'=>$vo.id])}">编辑</a> 
+									</td>
+								</tr>
+							</foreach>
+						</tbody>
+					</table>
+					<ul class='pagination'>{$page}</ul>
+				
+	          </div>
+			</div>
+	        </div>
+		</form>
+	</div>
+	<include file="public@scripts"/>
+</body>
+</html>

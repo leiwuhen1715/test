@@ -1,0 +1,195 @@
+<include file="public@new_header"/>
+</head>
+<body>
+
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-brief">
+              <ul class="layui-tab-title">
+                <li class="layui-this">
+                  <a href="{:url('AdminTime/index')}">课时列表</a>
+                </li>
+                <li>
+                  <a href="{:url('AdminTime/add')}">添加课时</a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="card-body js-check-wrap">
+              <form class="layui-form form-inline margin-top-20" method="post" action="{:cmf_url('AdminTime/daochu')}">
+                <div class="demoTable layui-form-item layui-card-header layuiadmin-card-header-auto" style='margin-bottom: 10px'>
+                  搜索：
+                  <div class="layui-inline">
+                    <input type="text" class="layui-input" id="title" name='title'
+                         value="" placeholder="课程名称">
+                  </div>
+                  <div class="layui-inline">
+                     <select  class="layui-input" name="cate_id" id="cate_id">
+                         <option value="">分类</option>
+                         {$category_tree}
+                     </select>
+                  </div>
+                  <div class="layui-inline">
+                     <select  class="layui-input" name="status" id="status">
+                         <option value="">显示</option>
+                         <option value="1">是</option>
+                         <option value="0">否</option>
+                     </select>
+                  </div>
+                  <button type='button' class="layui-btn" lay-submit lay-filter="LAY-app-order-search">搜索</button>
+              </div>
+              <div class="layui-card-body table-responsive">
+                  <table class="layui-hide" id="test" lay-filter="test"></table>
+              </div>
+              </form>
+            </div>
+        </div>
+    </div>
+          
+        
+ <script src="__STATIC__/js/layui/layui.js"></script>
+<script type="text/html" id="barDemo">
+	<a class="layui-btn layui-btn-xs" href="{:cmf_url('AdminTime/edit')}?id={{d.id}}">编辑</a>
+	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="switchTpl">
+  <input type="checkbox" name="sex" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="sexDemo" {{ d.is_on_sale == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="switchTpl1">
+  <input type="checkbox" name="sex" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="sexDemo1" {{ d.is_recommend == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="test-table-totalRow-toolbarDemo">
+  <div class="layui-btn-container">
+    <button type='button' class="layui-btn layui-btn-sm layui-btn-normal" lay-event="getCheckData"><i class="layui-icon"></i>删除</button>
+  </div>
+</script>
+<script>
+
+    layui.use(['form','table'], function(){
+		var form = layui.form
+		,layer = layui.layer
+		,table = layui.table;
+
+		table.render({
+			elem: '#test'
+			,url:"{:cmf_url('AdminTime/ajax')}"
+			,toolbar:"#test-table-totalRow-toolbarDemo"
+			,cols: [[
+			  {field:'id', type: 'checkbox'}
+			  ,{field:'id', width:80, title: 'ID', sort: true}
+			  ,{field:'goods_name', title: '课程'}
+			  ,{field:'user_nickname', title: '教练'}
+			  ,{field:'cate_name', width:110, title: '类型'}
+			  ,{field:'people_num', width:100, title: '人数'}
+			  ,{field:'enroll_num', width:100, title: '预约人数'}
+			  ,{field:'lesson_time',  width:260,title: '上课时间', sort: true}
+			  ,{field:'is_recommend',  title: '推荐',width:100, templet: '#switchTpl1', unresize: true}
+			  ,{field:'is_on_sale',  title: '显示',width:100, templet: '#switchTpl', unresize: true}
+			  ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:120}
+			]]
+			,id: 'testReload'
+			,page: true
+		});
+
+        //监听性别操作
+        form.on('switch(sexDemo)', function(obj){
+
+            var is_on_sale = obj.elem.checked?1:0;
+            $.ajax({
+                  type: "post",
+                  url: "{:cmf_url('AdminTime/changeVal')}",
+                  data: {id: this.value,field:'is_on_sale',value:is_on_sale},
+                  dataType: "json",
+                  success: function(data) {
+
+                  }
+              });
+
+        });
+		form.on('switch(sexDemo1)', function(obj){
+		
+		    var is_recommend = obj.elem.checked?1:0;
+		    $.ajax({
+		          type: "post",
+		          url: "{:cmf_url('AdminTime/changeVal')}",
+		          data: {id: this.value,field:'is_recommend',value:is_recommend},
+		          dataType: "json",
+		          success: function(data) {
+		
+		          }
+		      });
+		
+		});
+        //头工具栏事件
+        table.on('toolbar(test)', function(obj){
+          var checkStatus = table.checkStatus(obj.config.id);
+        
+          switch(obj.event){
+            case 'getCheckData':
+              var data = checkStatus.data;
+        
+              var deletenum =[];
+              for(var i=0;i<data.length;i++){
+                deletenum.push(data[i].id)
+              }
+              if(deletenum.length < 1){
+                layer.msg('请选择内容');
+                return
+              }
+              layer.confirm('真的删除么？', function(index){
+                  $.ajax({
+                      type: "get",
+                      url: "{:cmf_url('AdminTime/delete_all')}",
+                      data: {"ids": deletenum},
+                      dataType: "json",
+                      success: function(data) {
+                          layer.close(index);
+                          table.reload('testReload', {
+                            page: {
+                              curr: 1 //重新从第 1 页开始
+                            }
+                          }, 'data');
+                      }
+                  });
+              });
+            break;
+          };
+        });
+        //监听行工具事件
+        table.on('tool(test)', function(obj){
+
+            var data = obj.data;
+
+            if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+
+                    $.ajax({
+                        type: "get",
+                        url: "{:cmf_url('AdminTime/delete_all')}",
+                        data: {"ids": obj.data.id},
+                        dataType: "json",
+                        success: function(data) {
+                            obj.del();
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        });
+        //监听搜索
+        form.on('submit(LAY-app-order-search)', function(data){
+          var field = data.field;
+          //执行重载
+          table.reload('testReload', {
+            where: field
+          });
+        });
+    });
+</script>
+
+
+  <script src="__STATIC__/js/admin.js"></script>
+
+
+</body>
+</html>

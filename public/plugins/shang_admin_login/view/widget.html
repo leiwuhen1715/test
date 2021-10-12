@@ -1,0 +1,55 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>{:lang('ADMIN_CENTER')}</title>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge"/>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="robots" content="noindex,nofollow">
+    <link href="__PLUGIN_TMPL__/assets/login.css" rel="stylesheet">
+</head>
+<body class='beijing'>
+	<div class="mainarea">
+		<form name="login" class="js-ajax-form" action="{:url('public/doLogin')}" method="post">
+			<div class="big_bt">   	
+				<h1>名远&nbsp;&nbsp;·&nbsp;&nbsp;WEB管理中心</h1>  
+				<!-- 	<p>名远·网站管理系统V6.2.3</p> -->  
+			</div>
+			<div class="biaodan">	
+				<div class="biaoti">		
+					<h2>用户登录<span>userlogin</span></h2>	
+				</div>	
+				<ul>		
+					<li>
+						<em></em><input type="text" name="username" class="t_input" id="username" placeholder="用户名" value="{:cookie('admin_username')}" />
+					</li>		
+					<li>
+						<em></em><input type="password" name="password" class="t_input" placeholder="密码" />
+					</li>		
+					<li>
+						<em></em><input name="captcha" type="text" class="t_input" id="yzcode" maxlength="5" placeholder="验证码">
+						<captcha height="28" width="100" font-size="13" class="pull-right js-ajax-submit" id="captcha" style="cursor: pointer;"/>
+					</li>		
+					<div class="anniu">				
+						<button type="submit" class="button1 submit js-ajax-submit">登录后台</button>
+					</div>	
+				</ul>
+			</div>
+		</form>
+	</div>
+	<p class="footer">Powered by 名远科技 &copy; 2006 - {:date('Y')} <a href="http://www.mykj.cc" target="_blank">mykj.cc</a></p>
+
+	<script type="text/javascript">
+		//全局变量
+		var GV = {
+			ROOT: "__ROOT__/",
+			WEB_ROOT: "__WEB_ROOT__/",
+			JS_ROOT: "static/js/",
+			APP: ''/*当前应用名*/
+		};
+	</script>
+	<script src="__STATIC__/js/jquery.js"></script>
+	<script src="__STATIC__/js/wind.js"></script>
+	<script src="__STATIC__/js/admin.js"></script>
+
+</body>
+</html>

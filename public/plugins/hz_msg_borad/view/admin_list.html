@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>列表</title>
+    <meta name="description" content="列表">
+    <meta name="keywords" content="列表">
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>申请报价</a></li>
+    </ul>
+    <div class="common-form">
+        <form method="post" class="js-ajax-form" action="#">
+            <div class="table_list">
+                <table width="100%" class="table table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th width="300">产品</th>
+                        <th width="150">手机号码</th>
+                        <th>备注</th>
+                        <th width="200">提交时间</th>
+                        <th width="200">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <foreach name="datas" item="vo">
+                        <tr>
+                            <td>{$vo.title}</td>
+                            <td>{$vo.phone}</td>
+                            <td>{$vo.msg}</td>
+                            <td>{$vo.createtime}</td>
+                            <td>
+                                <a class="btn btn-xs btn-warning js-ajax-dialog-btn" href="{:cmf_plugin_url('HzMsgBorad://AdminIndex/delete',array('id'=>$vo['id']))}"
+                                   data-msg="确定删除吗？">删除</a>
+                            </td>
+                        </tr>
+                    </foreach>
+                    </tbody>
+                </table>
+                <ul class="pagination">{$page|default=''}</ul>
+            </div>
+        </form>
+    </div>
+</div>
+<include file="public/scripts"/>
+</body>
+</html>

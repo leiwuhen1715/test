@@ -1,0 +1,221 @@
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{$supplier_name}对账单</title>
+    <link href="__TMPL__/public/static/css/hui.css" rel="stylesheet">
+    <style type="text/css">
+        .store-head {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 110px;
+            height: 80px;
+        }
+
+            .store-head img {
+                width: 66px;
+                border-radius: 5%;
+            }
+
+        .hui-media-list li {
+            justify-content: flex-start;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wx-name {
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .scroll {
+            display: flex;
+            justify-content: flex-start;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .scroll-item {
+            width: 50px !important;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .order-info {
+            width: 100%;
+            height: 80px;
+            flex-flow: column;
+            margin: 10px 0;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+            .order-info span {
+                margin: 0 0 10px 0;
+            }
+
+        .hui-list-text {
+            justify-content: center;
+        }
+    </style>
+    <!-- 使用 phoneSwipe 插件完成图片预览 -->
+    <!-- 引用 phoneSwipe 插件依赖的 css 及 js -->
+    <script src="__TMPL__/public/static/js/photoswipe.min.js"></script>
+    <script src="__TMPL__/public/static/js/photoswipe-ui-default.min.js"></script>
+    <link href="__TMPL__/public/static/css/photoswipe.css" rel="stylesheet">
+    <!-- 以下为 phoneSwipe 插件 dom 复制即可 -->
+</head>
+<body>
+    <header class="hui-header" style="background: rgba(244, 47, 47, 1)">
+        <h1>{$supplier_name}对账单</h1>
+    </header>
+    <div class="hui-wrap" id="store-order-detail">
+        <div class="hui-list" style="background:#FFFFFF; margin-top:10px;">
+            <a href="javascript:void(0);" style="height:auto; height:80px; padding-bottom:8px;">
+                <div class="hui-list-icons store-head">
+                    <img src="{:cmf_get_image_url($supplier.thumbnail)}">
+                </div>
+                <div class="hui-list-text" style="height:79px; line-height:79px;">
+                    <div class="hui-list-text-content">
+                        {$supplier_name}
+                    </div>
+                </div>
+            </a>
+            <a href="javascript:void(0);">
+                <div class="hui-list-text">
+                    日期:{$date}
+                </div>
+            </a>
+            <a href="javascript:void(0);">
+                <div class="hui-list-text">
+                    成单量 : {:count($order_list)}单 | 总返现 : {$hire_money} |佣金 :{$order_amount-$hire_money}元  | 总费用 :{$order_amount}元
+                </div>
+            </a>
+            <a>
+                <div class="hui-list-text">
+                    ********** 点击下方图片放大查看 **********
+                </div>
+            </a>
+        </div>
+        <div class="hui-media-list" style="margin-top:10px;">
+            <ul>
+                <foreach name='order_list' item='vo'>
+                    <php>
+                        $pay_img = empty($vo['pay_img'])?[]:explode(',',$vo['pay_img']);
+			            $com_img = empty($vo['com_img'])?[]:explode(',',$vo['com_img']);
+                    </php>
+                    <li>
+                        <div class="hui-list-icons flex" style="width:110px; height:80px; flex-flow: column;">
+                            <img class="hui-lazy" src="{:url('user/public/avatar',['id'=>$vo.user_id])}" style="width:50px; margin:0px; border-radius:50%;">
+                            <span class="wx-name">{:get_user_nickname($vo.user_id)}</span>
+                        </div>
+                        <div class="flex order-info">
+                            <span>
+                                报名时间：{:date('Y-m-d H:i:s',$vo.add_time)}
+                            </span>
+                            <div class="scroll" style="width: 100%;">
+                                <foreach name='pay_img' item='v'>
+                                    <img class="scroll-item hui-lazy" onclick="previewImg(0,this)" src="{:cmf_get_image_url($v)}">
+                                </foreach>
+                                <foreach name='com_img' item='v'>
+                                    <img class="scroll-item hui-lazy" onclick="previewImg(0,this)" src="{:cmf_get_image_url($v)}">
+                                </foreach>
+                            </div>
+                        </div>
+                    </li>
+                </foreach>
+            </ul>
+        </div>
+    </div>
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="pswp__bg"></div>
+        <div class="pswp__scroll-wrap">
+            <div class="pswp__container" style="overflow:visible;">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+            <div class="pswp__ui pswp__ui--hidden">
+                <div class="pswp__top-bar">
+                    <div class="pswp__counter"></div>
+                    <button class="pswp__button pswp__button--close" title="关闭"></button>
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                            <div class="pswp__preloader__cut">
+                                <div class="pswp__preloader__donut"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                    <div class="pswp__share-tooltip"></div>
+                </div>
+                <div class="pswp__caption">
+                    <div class="pswp__caption__center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function previewImg(ruls, image) {
+            var imgs = image.parentNode.getElementsByTagName('img'), items = [];
+            var pswpElement = document.querySelectorAll('.pswp')[0];
+            for (var i = 0; i < imgs.length; i++) {
+                items.push({
+                    src: imgs[i].src,
+                    w: imgs[i].naturalWidth,
+                    h: imgs[i].naturalHeight
+                })
+            }
+            var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                index: ruls,
+                loop: false
+            });
+            gallery.init();
+        }
+        function previewImg11(index, ruls) {
+            var fileServer = "http://www.lailaiyangni.com/";
+            var imgsrc1 = "/Content/1.png";
+            var imgsrc2 = "/Content/2.png";
+            var imgsrc3 = "/Content/3.png";
+            var pswpElement = document.querySelectorAll('.pswp')[0];
+            var items = [];
+            //获取图片数据并填充近数组
+            var image = new Image();
+            image.src = fileServer + imgsrc1;
+            items.push({
+                src: image.src,
+                w: image.naturalWidth,
+                h: image.naturalHeight
+            });
+            image.src = fileServer + imgsrc2;
+            items.push({
+                src: image.src,
+                w: image.naturalWidth,
+                h: image.naturalHeight
+            });
+            image.src = fileServer + imgsrc3;
+            items.push({
+                src: image.src,
+                w: image.naturalWidth,
+                h: image.naturalHeight
+            });
+            var options = {
+                index: ruls,
+                loop: false
+            };
+            setTimeout(function () {
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+                gallery.init();
+            }, 500)
+        }
+    </script>
+</body>
+</html>

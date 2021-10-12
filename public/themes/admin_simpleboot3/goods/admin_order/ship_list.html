@@ -1,0 +1,66 @@
+<include file="public@header"/>
+<link href="__TMPL__/public/assets/simpleboot3/css/theme.min.css" rel="stylesheet">
+
+</head>
+<body>
+	<div class="wrap js-check-wrap goods">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="javascript:;">发货单列表</a></li>
+		</ul>
+		<form class="well form-search" id="search-form2" method="post" action="" onsubmit="return false">
+			<input type="hidden" name="orderby1" value="order_id" />
+            <input type="hidden" name="orderby2" value="desc" />
+			
+			订单编号： 
+			<input type="text" name="keyword_sn" style="width: 180px;" value="" placeholder="请输入订单编号...">
+			<!--收货人：
+			<input type="text" name="keyword_name" style="width: 180px;" value="" placeholder="请输入订单编号..."-->
+			<button type="submit" class="btn btn-primary" onclick="ajax_get_table('search-form2',1)" value="搜索" >搜索</button>			
+		</form>
+		<form class="js-ajax-form" action=""  method="post">						
+			<div id="ajax_return"> </div>
+		</form>
+		
+	</div>
+	
+	<!--script src="__PUBLIC__/js/common.js"></script-->
+	<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+	
+	<script>
+    $(document).ready(function(){
+		// ajax 加载订单列表
+        ajax_get_table('search-form2',1);
+
+    });
+
+
+    // ajax 抓取页面 form 为表单id  page 为当前第几页
+    function ajax_get_table(form,page){
+		cur_page = page; //当前页面 保存为全局变量
+		$('#loading',parent.document).show();
+            $.ajax({
+                type : "POST",
+                url:'ajax_ship_list?p='+page,
+                data : $('#'+form).serialize(),// 你的formid
+                success: function(data){
+                    $("#ajax_return").html('');
+                    $("#ajax_return").append(data);
+					$('#loading',parent.document).hide();
+                }
+            });
+        }
+      
+         // 点击排序
+        function sort(field)
+        {									
+           $("input[name='orderby1']").val(field);
+           var v = $("input[name='orderby2']").val() == 'desc' ? 'asc' : 'desc';             
+           $("input[name='orderby2']").val(v);
+		   
+           ajax_get_table('search-form2',cur_page);		   
+        }
+        
+		
+</script> 
+</body>
+</html>
