@@ -30,10 +30,14 @@ class ListController extends RestBaseController
         $where = [];
 
         if($prom_type) 		$where[] = ['prom_type','=',1];
-        if($is_recommend)	$where[] = ['is_recommend','=',1];
         if($is_special)		$where[] = ['is_special','=',1];
+        if($keyword){
+            $where[] = ['goods_name','like',"%".$keyword."%"];
+        }else{
+            if($is_recommend)	$where[] = ['is_recommend','=',1];
+        }
         if($id)             $where[] = $this->getChild($id);
-        if($keyword)		$where[] = ['goods_name','like',"%".$keyword."%"];
+
 
         $order = ['list_order' => 'asc','goods_id'   => 'desc'];
         $data = $goods->field('goods_id,goods_img,goods_name,shop_price,market_price,goods_sn,keywords,is_buy,hire_price,store_count')->where($where)->order($order)->paginate(10);

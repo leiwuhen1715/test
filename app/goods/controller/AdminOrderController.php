@@ -220,10 +220,14 @@ class AdminOrderController extends AdminBaseController {
                     //归还
                     $note = empty($note) ? '归还' : '归还：'.$note;
                     $updata['shipping_status'] = 2;
+                    $updata['confirm_time'] = time();
+
                     break;
 				case 'receive':
 					$updata['shipping_status'] = 2;
+                    $updata['confirm_time'] = time();
 					$note = empty($note) ? '确认收货' : $note;
+
 					break;
 				case 'complete':
 					$updata['order_status'] = 2;

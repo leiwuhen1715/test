@@ -30,39 +30,65 @@
 							<td>{$order_status[$order['order_status']]} / {$pay_status[$order['pay_status']]} / {$shipping_status[$order['shipping_status']]}</td>
 						</tr>
 						<tr>
+							<th align="right" width=300>订单类型：</th>
+							<td>
+								<eq name="order.buy_type" value="0">
+									<button type='button' class="layui-btn layui-btn-danger layui-btn-xs">租赁</button>
+								<else />
+									<button type='button' class="layui-btn layui-btn-xs">购买</button>
+								</eq>
+							</td>
+							<th align="right" width=300>配送方式：</th>
+							<td>
+								<eq name="order.send_type" value="0">
+									<button type='button' class="layui-btn layui-btn-normal layui-btn-xs">自提</button>
+								<else />
+									<button type='button' class="layui-btn layui-btn-warm layui-btn-xs">快递</button>
+								</eq>
+							</td>
+						</tr>
+						<tr>
 							<th align="right" width=300>会员：</th>
 							<td>{$order.user_login}</td>
-							<th align="right" width=300>下单时间：</th>
-							<td>{:date('Y-m-d H:i',$order.add_time)}</td>
+							<th align="right" width=300>租赁时间：</th>
+							<td><eq name="order.buy_type" value="0">{:date('Y-m-d H:i:s',$order.start_time)} - {:date('Y-m-d H:i:s',$order.end_time)}</eq></td>
 						</tr>
 						<tr>
 							<th align="right" width=300>支付方式：</th>
 							<td>{$order.pay_name}</td>
-							<th align="right" width=300>付款时间：</th>
-							<td><notempty name="order.pay_time">{:date('Y-m-d H:i',$order.pay_time)}</notempty></td>
-						</tr>
-						<tr>
 							<th align="right" width=300>支付金额：</th>
 							<td>{$order.order_amount}</td>
-							<th align="right" width=300>发货时间：</th>
-							<td><notempty name="order.shipping_time">{:date('Y-m-d H:i',$order.shipping_time)}</notempty></td>
-						</tr>
-					</table>
-					<h4 class="well">收货人信息<!--a href="{:url('Goods/AdminOrder/editaddress',array('order_id'=>$order['order_id']))}"><i class="fa fa-pencil"></i></a--></h4>
-					<table style="width:100%;" border="0" cellspacing="1" cellpadding="6">
-						<tr>
-							<th align="right" width=300>收货人：</th>
-							<td>{$order.consignee}</td>
-							<th align="right" width=300>联系电话：</th>
-							<td>{$order.mobile}</td>
 						</tr>
 						<tr>
-							<th align="right" width=300>收货地址：</th>
-							<td>{$order.address}</td>
-							<th align="right" width=300>配送物流：</th>
-							<td>{$order.shipping_name}</td>
+							<th align="right" width=300>下单时间：</th>
+							<td>{:date('Y-m-d H:i:s',$order.add_time)}</td>
+							<th align="right" width=300>付款时间：</th>
+							<td><notempty name="order.pay_time">{:date('Y-m-d H:i:s',$order.pay_time)}</notempty></td>
+						</tr>
+						<tr>
+							<th align="right" width=300><eq name="order.send_type" value="1">发货时间<else>提货时间</eq>：</th>
+							<td><notempty name="order.shipping_time">{:date('Y-m-d H:i:s',$order.shipping_time)}</notempty></td>
+							<th align="right" width=300><eq name="order.send_type" value="1">收货时间<else>归还时间</eq>：</th>
+							<td><notempty name="order.confirm_time">{:date('Y-m-d H:i:s',$order.confirm_time)}</notempty></td>
 						</tr>
 					</table>
+					<eq name="order.send_type" value="1">
+						<h4 class="well">收货人信息<!--a href="{:url('Goods/AdminOrder/editaddress',array('order_id'=>$order['order_id']))}"><i class="fa fa-pencil"></i></a--></h4>
+						<table style="width:100%;" border="0" cellspacing="1" cellpadding="6">
+							<tr>
+								<th align="right" width=300>收货人：</th>
+								<td>{$order.consignee}</td>
+								<th align="right" width=300>联系电话：</th>
+								<td>{$order.mobile}</td>
+							</tr>
+							<tr>
+								<th align="right" width=300>收货地址：</th>
+								<td>{$order.address}</td>
+								<th align="right" width=300>配送物流：</th>
+								<td>{$order.shipping_name}</td>
+							</tr>
+						</table>
+					</eq>
 					<h4 class="well">商品信息</h4>
 					<table style="width:100%;" border="0" cellspacing="1" cellpadding="6">
 						<tr>
@@ -77,27 +103,27 @@
 							<td align="center">{$vo.goods_name}</td>
 							<td width="250" align="center">{$vo.spec_item_name}</td>
 							<td width="200" align="center">{$vo.goods_num}</td>
-							<td width="200" align="center">¥{$vo.member_goods_price}</td>
+							<td width="200" align="center">¥{$vo.goods_price}</td>
 							<td width="200" align="center">¥{$vo.goods_total}</td>
 						</tr>
 						</foreach>
 						<tr>
-							<td colspan=5 align="right" style="padding-right:50px;">合计：¥{$order.goods_price}</td>
+							<td colspan=5 align="right" style="padding-right:50px;">合计：¥{$order.total_amount}</td>
 						</tr>
 					</table>
 					<h4 class="well">费用信息<!--a href="{:url('Goods/AdminOrder/editprice',array('order_id'=>$order['order_id']))}"><i class="fa fa-pencil"></i></a--></h4>
 					<table style="width:100%;" border="0" cellspacing="1" cellpadding="6">
 						<tr>
-							<td align="center">总计：¥{$order.goods_price}</td>
+							<td align="center">总计：¥{$order.total_amount}</td>
 						</tr>
 						<if condition="$order.coupon_price gt 0">
 							<tr>
 								<td align="center">红包：-¥{$order.coupon_price}</td>
 							</tr>
 						</if>
-						<tr>
+						<!--<tr>
 							<td align="center">运费：¥{$order.shipping_price}</td>
-						</tr>
+						</tr>-->
 						<tr>
 							<td align="center">应付：¥{$order.order_amount}</td>
 						</tr>

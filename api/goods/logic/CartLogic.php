@@ -407,6 +407,7 @@ class CartLogic extends Relation
                 $s_goods['goods_price'] = $s_goods['buy_type']==0?$s_goods['hire_price']:$s_goods['goods_price'];
                 $s_goods['order_id']    = $order_id; // 订单id
                 $s_goods['use_day']     = $cart_price['use_day'];
+                $s_goods['goods_total'] = $s_goods['goods_price']*$s_goods['goods_num'];
                 Db::name("OrderSub")->strict(false)->insert($s_goods);
                 Db::name('Cart')->where(['user_id'=>$user_id,'type'=>1])->delete();
 
@@ -424,7 +425,7 @@ class CartLogic extends Relation
                     $v['goods_price'] = $v['buy_type']==0?$v['hire_price']:$v['goods_price'];
                     $v['order_id']    = $order_id; // 订单id
                     $v['use_day']     = $cart_price['use_day']; // 订单id
-
+                    $v['goods_total'] = $v['goods_price']*$v['goods_num'];
                     Db::name("OrderSub")->strict(false)->insert($v);
 
                     $goods_name[] = $v['goods_name'];
