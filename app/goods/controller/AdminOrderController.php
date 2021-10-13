@@ -39,26 +39,39 @@ class AdminOrderController extends AdminBaseController {
 		$where = [
 			['is_del','=',0]
 		];
-		$limit = request()->param('limit',10,'intval');
+
+        $page          = request()->param('page',1,'intval');
+		$limit          = request()->param('limit',10,'intval');
         $keyword_sn	  	 =	request()->param('keyword_sn');
 		$keyword_name 	 =	request()->param('keyword_name');
 		$supplier_id  	 =  request()->param('supplier_id',0,'intval');
 		$order_status 	 =	request()->param('order_status');
 		$pay_status 	 =  request()->param('pay_status');
 		$shipping_status =  request()->param('shipping_status');
+        $send_type 	     =  request()->param('send_type');
+        $buy_type 	     =  request()->param('buy_type');
 
-        if($keyword_sn)          $where[] = ['order_sn','like',"%$keyword_sn%"];
-		if($keyword_name)        $where[] = ['consignee','like',"%$keyword_name%"];
+
+
         if($supplier_id)         $where[] = ['supplier_id','=',$supplier_id];
 		if($order_status != '')  $where[] = ['order_status','=',$order_status];
 		if($pay_status != '')    $where[] = ['pay_status','=',$pay_status];
 		if($shipping_status!='') $where[] = ['shipping_status','=',$shipping_status];
+        if($send_type != '')     $where[] = ['send_type','=',$send_type];
+        if($buy_type != '')      $where[] = ['buy_type','=',$buy_type];
+        if($keyword_sn)          $where[] = ['order_sn','like',"%$keyword_sn%"];
+        if($keyword_name)        $where[] = ['consignee','like',"%$keyword_name%"];
 
-		$order_str = ['order_id'=>'desc'];
-		$count     = Db::name('order')->where($where)->count();	
-		$order_list= $this->order_model->where($where)->order($order_str)->paginate($limit);
+		$order_str  = ['order_id'=>'desc'];
+		$count      = Db::name('order')->where($where)->count();
+		$order_list = $this->order_model->where($where)->order($order_str)->page($page,$limit)->select()->each(function($item){
+            $item['add_time']   = date('Y-m-d H:i:s',$item['add_time']);
+            $item['start_time'] = date('Y-m-d',$item['start_time']);
+            $item['end_time']   = date('Y-m-d',$item['end_time']);
+		    return $item;
+        });
 		
-		$result = ['code'=>0,'count'=>$count,'data'=>$order_list->items()];
+		$result = ['code'=>0,'count'=>$count,'data'=>$order_list];
 		die(json_encode($result));
 	}
 	
@@ -197,6 +210,17 @@ class AdminOrderController extends AdminBaseController {
 					}
 					$updata['order_status'] = 4;
 					break;
+                case 'take':
+                    //提货
+                    $note = empty($note) ? '提货' : '提货：'.$note;
+                    $updata['shipping_status'] = 1;
+                    $updata['shipping_time']   = time();
+                    break;
+                case 'revert':
+                    //归还
+                    $note = empty($note) ? '归还' : '归还：'.$note;
+                    $updata['shipping_status'] = 2;
+                    break;
 				case 'receive':
 					$updata['shipping_status'] = 2;
 					$note = empty($note) ? '确认收货' : $note;

@@ -21,8 +21,22 @@
                   <div class="layui-inline">
                     <input type="text" class="layui-input" id="keyword_name" name='keyword_name' value="" placeholder="搜索收货人">
                   </div>
+                    <div class="layui-inline">
+                        <select class="layui-input" name="buy_type">
+                            <option value="">订单类型</option>
+                            <option value='0'>租赁</option>
+                            <option value='1'>购买</option>
+                        </select>
+                    </div>
+                    <div class="layui-inline">
+                        <select class="layui-input" name="send_type">
+                            <option value="">配送方式</option>
+                            <option value='0'>自提</option>
+                            <option value='1'>快递</option>
+                        </select>
+                    </div>
                   <div class="layui-inline">
-                     <select class="layui-input" name="order_status" id="order_status">
+                     <select class="layui-input" name="order_status">
                         <option value="">订单状态</option>
                         <option value='0'>待确认</option>
 						<option value='1'>已确定</option>
@@ -30,14 +44,14 @@
                      </select>
                   </div>
                   <div class="layui-inline">
-                     <select class="layui-input" name="pay_status" id="pay_status">
+                     <select class="layui-input" name="pay_status">
                         <option value="">付款状态</option>
                         <option value='0'>未付款</option>
 						<option value='1'>已付款</option>
                      </select>
                   </div>
                   <div class="layui-inline">
-                     <select class="layui-input" name="shipping_status" id="shipping_status">
+                     <select class="layui-input" name="shipping_status">
                         <option value="">发货状态</option>
                         <option value='0'>未发货</option>
 						<option value='1'>已发货</option>
@@ -68,10 +82,29 @@
         <button type="button" class="layui-btn layui-btn-primary layui-btn-xs">{{pay_status[d.pay_status]}}</button>
         <button type="button" class="layui-btn layui-btn-warm layui-btn-xs">{{shipping_status[d.shipping_status]}}</button>
     </script>
+    <script type="text/html" id="buy_type">
+        {{# if(d.buy_type == 0){ }}
+            <button type='button' class="layui-btn layui-btn-danger layui-btn-xs">租赁</button>
+        {{# }else{ }}
+            <button type='button' class="layui-btn layui-btn-xs">购买</button>
+        {{# } }}
+    </script>
+    <script type="text/html" id="start_time">
+        {{# if(d.buy_type == 0){ }}
+            {{d.start_time}} - {{d.end_time}}
+        {{# } }}
+    </script>
+    <script type="text/html" id="send_type">
+        {{# if(d.send_type == 0){ }}
+        <button type='button' class="layui-btn layui-btn-normal layui-btn-xs">自提</button>
+        {{# }else{ }}
+        <button type='button' class="layui-btn layui-btn-warm layui-btn-xs">快递</button>
+        {{# } }}
+    </script>
 	<script type="text/html" id="test-table-totalRow-toolbarDemo">
-	  <div class="layui-btn-container">
+	  <!--<div class="layui-btn-container">
 	    <button type='button' class="layui-btn layui-btn-sm" lay-event="getCheckData">删除</button>
-	  </div>
+	  </div>-->
 	</script>
 	<script>
 
@@ -88,6 +121,9 @@
 	          {field:'order_id', type: 'checkbox'}
 	          ,{field:'order_id', width:80, title: 'ID', sort: true}
 	          ,{field:'order_sn', title: '订单编号'}
+	          ,{field:'buy_type', width:70, title: '类型',templet: "#buy_type"}
+	          ,{field:'send_type', width:70, title: '配送',templet: "#send_type",}
+	          ,{field:'start_time', title: '租赁时间',templet: "#start_time"}
 	          ,{field:'consignee', width:110, title: '收货人'}
 	          ,{field:'mobile', width:120, title: '手机'}
 	          ,{field:'order_amount',width:110, title: '应付金额',sort: true}

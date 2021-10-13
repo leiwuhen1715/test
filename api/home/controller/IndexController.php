@@ -56,6 +56,17 @@ class IndexController extends RestBaseController
 
     	$this->success('ok',$count);
     }
+
+    /**
+     * 获取站点信息
+     */
+    public function site(){
+
+        $siteInfo = cmf_get_site_info();
+        $this->success('ok',$siteInfo);
+
+    }
+
     //判断是否可以使用优惠券
     public function use(){
     	$user_id = $this->userId;

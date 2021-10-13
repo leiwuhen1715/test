@@ -30,7 +30,7 @@ class OrderService
     public function getList($filter, $userId = false)
     {
 
-        $OrderModel = new OrderModel();
+
 
         $field = 'o.*';
         $where=[
@@ -39,8 +39,7 @@ class OrderService
         if($userId){
             $where[] = ['o.user_id','=',$userId];
         }
-        $whereor='';
-
+        $whereor = '';
         $filter['type']= empty($filter['type'])?0:$filter['type'];
         if($filter['type'] == 1){
             $where[] = ['o.pay_status','=',0];
@@ -71,14 +70,10 @@ class OrderService
             // $where['o.order_status'] = ['<>',4];
         }
 
+        $model = new OrderModel();
+        $data  = $model->alias('o')->field($field)->where($where)->where($whereor)->order('o.order_id', 'DESC')->paginate(10);
 
-        $articles        = $OrderModel->alias('o')->field($field)
-            ->where($where)
-            ->where($whereor)
-            ->order('o.order_id', 'DESC')
-            ->paginate(10);
-
-        return $articles;
+        return $data;
 
     }
 
@@ -86,66 +81,14 @@ class OrderService
      * 用户订单状态
      */
     public function Handle($data){
+
         $ordersub   =   new OrderSubModel();
-        $goodsModel                = new Goods();
-
-
+        $result = [];
         foreach ($data as $key => $value) {
+            $value = $this->Hand($value);
+            $value['sub']        =   $ordersub->where('order_id',$value['order_id'])->select();
 
-            $sub        =   $ordersub->where('order_id',$value['order_id'])->select();
 
-            $data[$key]['sub'] = $sub;
-
-            $data[$key]['status_id']='';
-            $data[$key]['caozuo']='';
-            if($value['order_status']==3){
-
-                if($data[$key]['refun_status'] == 0){
-                    $data[$key]['status']='退款中';
-                }elseif($data[$key]['refun_status'] == 1){
-                    $data[$key]['status']='已退款';
-                }elseif($data[$key]['refun_status'] == 2){
-                    $data[$key]['status']='退款已处理';
-                }
-            }elseif($value['order_status']==0){
-                $data[$key]['status']='待确定';
-                if($value['pay_status']==0){
-                    $data[$key]['status']='待支付';
-                    $data[$key]['caozuo']='去付款';
-                    $data[$key]['status_id']=1;
-                }
-            }elseif($value['order_status']==4){
-                $data[$key]['status']='已取消';
-            }elseif($value['shipping_status']==2){
-                $data[$key]['status']='已完成';
-                if($value['is_comment'] == 0){
-                    $data[$key]['status_id']=3;
-                    $data[$key]['caozuo']='去评价';
-                }
-            }elseif($value['shipping_status']==1){
-                if($value['prom_type'] == 1){
-                    $data[$key]['status']='待收货';
-                    $data[$key]['caozuo']='确认收货';
-                }else{
-                    $data[$key]['status']='待收货';
-                    $data[$key]['caozuo']='确认收货';
-                }
-                $data[$key]['is_tui'] = 1;
-                $data[$key]['status_id']=2;
-            }elseif($value['pay_status']==1){
-
-                if($value['prom_type'] == 1){
-                    $data[$key]['status']='待发货';
-                }else{
-                    $data[$key]['status']='待发货';
-                }
-                $data[$key]['is_tui'] = 1;
-
-            }elseif($value['pay_status']==0){
-                $data[$key]['status']='待付款';
-                $data[$key]['caozuo']='去付款';
-                $data[$key]['status_id']=1;
-            }
         }
         return $data;
     }
@@ -159,34 +102,54 @@ class OrderService
         $data['status_id']='';
         $data['caozuo'] ='';
         if($data['order_status']==3){
-            $data['status']='退款';
+
+            if($data['refun_status'] == 0){
+                $data['status']='退款中';
+            }elseif($data['refun_status'] == 1){
+                $data['status']='已退款';
+            }elseif($data['refun_status'] == 2){
+                $data['status']='退款已处理';
+            }
         }elseif($data['order_status']==0){
             $data['status']='待确定';
         }elseif($data['order_status']==4){
             $data['status']='已取消';
+        }elseif($data['pay_status']==0){
+            $data['status']     = '待付款';
+            $data['caozuo']     = '去付款';
+            $data['status_id']  = 1;
         }elseif($data['shipping_status']==2){
             $data['status']='已完成';
-            if($data['is_comment'] == 0){
+            /*if($data['is_comment'] == 0){
                 $data['status_id']=3;
                 $data['caozuo']='去评价';
-            }
-        }elseif($data['shipping_status']==1){
-            $data['status']='待收货';
-            $data['caozuo']='确认收货';
-            $data['status_id']=2;
-            $data['is_tui'] = 1;
-        }elseif($data['pay_status']==1){
-            $data['status']='待发货';
-            $data['is_tui'] = 1;
-        }elseif($data['pay_status']==0){
-            $data['status']='待付款';
-            $data['caozuo']='去付款';
-            $data['status_id']=1;
-        }
-        $time =time();
+            }*/
+        }else {
+            if($data['send_type'] == 1){
+                if ($data['shipping_status'] == 1) {
+                    $data['status'] = '待收货';
+                    $data['caozuo'] = '确认收货';
+                    $data['status_id'] = 2;
+                    $data['is_tui'] = 1;
+                } elseif ($data['pay_status'] == 1) {
+                    $data['status'] = '待发货';
+                    $data['is_tui'] = 1;
+                }
 
-        $orderLogic = new OrderLogic;
-        $data['address'] = $orderLogic->getAddressName($data['province'],$data['city'],$data['district']).$data['address'];
+            }else{
+                if ($data['shipping_status'] == 1) {
+                    $data['status'] = '待归还';
+                    /*$data['caozuo'] = '确认收货';
+                    $data['status_id'] = 2;
+                    $data['is_tui'] = 1;*/
+                } elseif ($data['pay_status'] == 1) {
+                    $data['status'] = '待取货';
+                    //$data['is_tui'] = 1;
+                }
+            }
+
+        }
+
         return $data;
     }
     /**

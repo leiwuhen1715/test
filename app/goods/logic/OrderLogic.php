@@ -45,11 +45,20 @@ class OrderLogic extends Relation
       }elseif($os == 1 && $sh == 0 && $pay == 0){
         $btn['pay'] = '付款';
       }elseif($os == 1 && $sh == 0 && $pay == 1){
-          $btn['ship'] = '发货';
+          if($order['send_type'] == 1) {
+              $btn['ship'] = '发货';
+          }else{
+              $btn['take'] = '已提货';
+          }
           $btn['nopay'] = '未付款';
 
       }elseif($os == 1 && $sh == 1){
-        $btn['receive'] = '已收货';
+          if($order['send_type'] == 1) {
+              $btn['receive'] = '已收货';
+          }else{
+              $btn['revert'] = '已归还';
+          }
+
       }elseif($os == 0 && $sh == 0 && $pay == 1){
         $btn['confirm'] = '确定';
         $btn['nopay'] = '未付款';
