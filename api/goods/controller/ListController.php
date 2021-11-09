@@ -26,7 +26,6 @@ class ListController extends RestBaseController
         $is_special 	=  request()->param('is_special',0,'intval');
         $keyword    	=  request()->param('keyword');
 
-
         $goods                 = new Goods();
         $where = [];
 
@@ -38,7 +37,6 @@ class ListController extends RestBaseController
             if($is_recommend)	$where[] = ['is_recommend','=',1];
         }
         if($id)             $where[] = $this->getChild($id);
-
 
         $order = ['list_order' => 'asc','goods_id'   => 'desc'];
         $data = $goods->field('goods_id,goods_img,goods_name,shop_price,market_price,goods_sn,keywords,is_buy,hire_price,store_count')->where($where)->order($order)->paginate(10);

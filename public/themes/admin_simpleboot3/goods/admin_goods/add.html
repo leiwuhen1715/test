@@ -86,18 +86,18 @@
 							
 			      
 			          <div class="layui-form-item">
-			            <label class="layui-form-label">原价</label>
-			            <div class="layui-input-inline">
-			              <input type="text" placeholder="￥" name="post[market_price]" class="layui-input">
-			            </div>
-			          </div>
-			          <div class="layui-form-item">
-			            <label class="layui-form-label">售价</label>
-			            <div class="layui-input-inline">
-			              <input type="text" name="post[shop_price]" placeholder="￥" autocomplete="off" class="layui-input">
-			            </div>
-			            <div class="layui-form-mid layui-word-aux"></div>
-			          </div>
+							<label class="layui-form-label">租赁原价</label>
+							<div class="layui-input-inline">
+								<input type="text" placeholder="￥" name="post[hire_price]" class="layui-input" value="">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">购买价格</label>
+							<div class="layui-input-inline">
+								<input type="text" name="post[shop_price]" placeholder="￥" autocomplete="off" class="layui-input" value="">
+							</div>
+							<div class="layui-form-mid layui-word-aux"></div>
+						</div>
 			          <div class="layui-form-item">
 			            <label class="layui-form-label">库存</label>
 			            <div class="layui-input-inline">
@@ -110,7 +110,7 @@
 			            <label class="layui-form-label">类型</label>
 			            <div class="layui-input-block">
 			              	<input type="checkbox" name="post[is_recommend]" value="1" title="推荐">
-							<input type="checkbox" name="post[is_buy]" value="1" title="购买" <eq name='$data.is_buy' value='1'>checked</eq>>
+							<input type="checkbox" name="post[is_buy]" value="1" title="购买" checked>
 			            </div>
 			          </div>
 			          

@@ -11,6 +11,7 @@
 namespace api\user\service;
 
 
+use api\goods\service\SkuServer;
 use api\user\service\AliPayService;
 use api\user\service\WxPayService;
 use think\facade\Log;
@@ -48,8 +49,8 @@ class PayService
     public function balance($data){
         $result = '';
         $balance = Db::name('user')->where('id',$data['user_id'])->value('balance');
-        if($balance > $one['amount']){
-            log_balance_change($userId,'支付-'.$data['goods_name'],-$data['total_fee']);
+        if($balance >= $data['total_fee']){
+            log_balance_change($data['user_id'],'支付-'.$data['goods_name'],-$data['total_fee']);
             $res_status = $this->pay($data['out_trade_no']);
             $result = 1;
         }else{
@@ -155,7 +156,7 @@ class PayService
      * 商城支付
      */
     public function shopPay($order_sn){
-        $order_id = Db::name('order')->where('order_sn',$order_sn)->value('order_id');
+        $order = Db::name('order')->field('order_id,buy_type,start_time,end_time')->where('order_sn',$order_sn)->order('order_id','desc')->find();
         $updata=[
             'pay_status'=>1,
             'pay_time'  => time()
@@ -163,9 +164,31 @@ class PayService
         $result = DB::name('order')->where("order_id",$order_id)->update($updata);
         logOrder($order_id,'付款','pay','');
         $goods = Db::name('order_sub')->field('goods_id,goods_num,sku_id')->where('order_id',$order_id)->select();
+        if($order['buy_type'] == 0){
+            $sku_service = new SkuServer();
+            $zu_data = $sku_service->printDates($order['start_time'],$order['end_time']);
+        }
         foreach ($goods as $value){
-            Db::name('goods')->where('goods_id',$value['goods_id'])->inc('sales_sum',$value['goods_num'])->dec('store_count',$value['goods_num'])->update();
-            Db::name('goods_sku')->where('sku_id',$value['sku_id'])->inc('sales_sum',$value['goods_num'])->dec('store_count',$value['goods_num'])->update();
+            if($order['buy_type'] == 1){
+                Db::name('goods')->where('goods_id',$value['goods_id'])->inc('sales_sum',$value['goods_num'])->dec('store_count',$value['goods_num'])->update();
+                Db::name('goods_sku')->where('sku_id',$value['sku_id'])->inc('sales_sum',$value['goods_num'])->dec('store_count',$value['goods_num'])->update();
+            }else{
+
+                foreach ($zu_data as $vo){
+                    $where = ['goods_id'=>$value['goods_id'],'sku_id'=>$value['sku_id'],'date_time'=>$vo['time']];
+                    $count_id = Db::name('goods_count')->where($where)->value('id');
+                    if($count_id){
+                        Db::name('goods_count')->setInc('sell_count',$value['goods_num']);
+                    }else{
+                        $where['sell_count'] = $value['goods_num'];
+                        $where['year']       = date("Y",$vo['time']);
+                        $where['month']      = date("m",$vo['time']);
+                        $where['day']        = date("d",$vo['time']);
+                        Db::name('goods_count')->insert($where);
+                    }
+                }
+
+            }
 
         }
     }

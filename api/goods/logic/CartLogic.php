@@ -2,6 +2,7 @@
 
 namespace api\goods\logic;
 
+use api\goods\service\SkuServer;
 use think\Db;
 use think\Log;
 use think\Model;
@@ -74,22 +75,30 @@ class CartLogic extends Relation
        if($catr_goods)
        {
             //是否存在规格
-
+            
             // 如果购物车的已有数量加上 这次要购买的数量  大于  库存输  则不再增加数量
-            $res_num = $catr_goods['goods_num'] + $goods_num;
-            if($res_num < 1){
-                $result = Db::name('Cart')->where("id",$catr_goods['id'])->delete();
-                return ['status'=>1,'msg'=>'修改购物车'];
+            if($goods_num == 0){
+                $res_num = $catr_goods['goods_num'] + 1;
+            }elseif($goods_num > 0){
+                $res_num = $goods_num;
             }else{
-                if(($catr_goods['goods_num'] + $goods_num) > $goods['store_count']){
+                $res_num = $catr_goods['goods_num'] + $goods_num;
+            }
+            
+            if($res_num < 1){
+                return ['status'=>-2,'msg'=>'加入购物车失败','result'=>''];
+            }else{
+                if($res_num > $goods['store_count']){
 
-                    $cha_num = $goods['store_count'] - $catr_goods['goods_num'];
-                    return ['status'=>-102,'msg'=>'库存不足,最多购买'.$cha_num.'件','result'=>''];
+                    $cha_num = $goods['store_count'] - $res_num;
+                    return ['status'=>-102,'msg'=>'数量不足,请与客服联系','result'=>''];
 
                 }else{
-                    $data['goods_num'] = $catr_goods['goods_num'] + $goods_num;
+                    
+                    $data['goods_num'] = $res_num;
                     $result = Db::name('Cart')->where("id",$catr_goods['id'])->update($data); // 数量相加
                     return ['status'=>1,'msg'=>'成功加入购物车'];
+                    
                 }
             }
 
@@ -97,10 +106,13 @@ class CartLogic extends Relation
         else
         {
             if($goods_num <= 0){
+                
                 return ['status'=>-2,'msg'=>'加入购物车失败','result'=>''];
+                
             }else{
+                
                 if($goods_num >$goods['store_count'])
-                    return ['status'=>-102,'msg'=>'库存不足,最多购买'.$goods_num.'件','result'=>''];
+                    return ['status'=>-102,'msg'=>'数量不足,请与客服联系','result'=>''];
 
                 $insert_id = DB::name('Cart')->insert($data);
                 return ['status'=>1,'msg'=>'成功加入购物车'];
@@ -141,9 +153,13 @@ class CartLogic extends Relation
 
         return ['status'=>1,'msg'=>'','result'=>['cartList' =>$cartList]];
     }
-    public function getTotalPrice($user_id,$type=0){
-        $start_time = $end_time = $use_day = $buy_type = 0;
+    public function getTotalPrice($user_id,$type=0,$pay_code = 'wxpay'){
+        
+        $siteInfo = cmf_get_site_info();
+        $discount = $siteInfo['site_discount'];
+        $start_time = $coupon_price = $end_time = $use_day = $buy_type = 0;
         if($type == 0){
+            
             $where = [
                 'type'        => 0,
                 'user_id'     => $user_id,
@@ -162,7 +178,7 @@ class CartLogic extends Relation
                     $start_time = date('Y-m-d',$val['start_time']);
                     $end_time   = date('Y-m-d',$val['end_time']);
 
-                    $cut_fee += $val['goods_num'] * $val['hire_price']*$use_day; //应付价格
+                    $cut_fee     += $val['goods_num'] * $val['hire_price']*$use_day; //应付价格
                     $total_price += $val['goods_num'] * $val['hire_price']*$use_day; //产品总价
                 }else{
                     $buy_type = 1;
@@ -199,7 +215,15 @@ class CartLogic extends Relation
             }
 
         }
-        $result = ['total_fee' => sprintf('%.2f', $total_price), 'cut_fee' => sprintf('%.2f', $cut_fee),'num'=> $anum,'use_day'=>$use_day,'buy_type'=>$buy_type,'start_time'=>$start_time,'end_time'=>$end_time];
+        if($pay_code == 'balance'){
+            
+            if($discount > 0 && $buy_type == 0){
+                $cut_fee = $cut_fee*$discount/10;
+                $coupon_price = $total_price-$cut_fee;
+                
+            }
+        }
+        $result = ['total_fee' => sprintf('%.2f', $total_price),'coupon_price' => $coupon_price, 'cut_fee' => sprintf('%.2f', $cut_fee),'num'=> $anum,'use_day'=>$use_day,'buy_type'=>$buy_type,'start_time'=>$start_time,'end_time'=>$end_time];
 
         return $result;
     }
@@ -211,86 +235,63 @@ class CartLogic extends Relation
      * @param type $buy_type  类型 0 ：租赁，1：购买
      */
     public function addBuy($goods_id,$goods_num,$sku_id,$user_id,$buy_type = 0,$param=[]){
-        $prom_type = 0;
-        switch ($prom_type) {
-            case 0:
-                // 普通商品
-                    $where=[
-                        'goods_id'=>$goods_id
-                    ];
-                    $goods = Db::name('Goods')->where($where)->find(); // 找出这个产品
-                    if(!$goods){
-                        return array('status'=>-1,'msg'=>'产品不存在','result'=>'');
-                    }
-                    if($goods_num <= 0){
-                        return array('status'=>-2,'msg'=>'购买产品数量不能为0','result'=>'');
-                    }
-
-                    //获取规格
-                    $result_sku          = $this->getSkuArr($sku_id,$goods_id);
-                    if($result_sku['status'] == 0) return array('status'=>-9,'msg'=>$result_sku['msg'],'result'=>'');
-                    if($result_sku['status'] == 1){
-                        $goods_sku = $result_sku['goods_sku'];
-                        $goods['store_count']   = $goods_sku['store_count'];
-                        $goods['goods_price']     = $goods_sku['price'];
-                        $goods['hire_price']     = $goods_sku['hire_price'];
-                    }
-                break;
-            case 1:
-                //秒杀
-                $goods = Db::name('store_seckill')->where('id',$goods_id)->find();
-                //秒杀时间
-                $time=time();
-                if($goods['start_time']>$time){
-                    return array('status'=>-2,'msg'=>'活动还未开始','result'=>'');
-                }elseif($goods['end_time']<$time){
-                    return array('status'=>-2,'msg'=>'活动已经结束','result'=>'');
-                }
-                $prom_id  = $goods_id;
-                $goods_id = $goods['goods_id'];
-                $goods['goods_sn']     = '';
-                $goods['market_price'] = $goods['ot_price'];
-                $goods_spec_path = $spec_item_name = '';
-                break;
-            default:
-                return ['status'=>-2,'msg'=>'产品不存在','result'=>''];
-                break;
+        $where=[
+            'goods_id'=>$goods_id
+        ];
+        $goods = Db::name('Goods')->where($where)->find(); // 找出这个产品
+        if(!$goods){
+            return array('status'=>-1,'msg'=>'产品不存在','result'=>'');
+        }
+        if($goods_num <= 0){
+            return array('status'=>-2,'msg'=>'购买产品数量不能为0','result'=>'');
         }
 
-        if($goods['store_count'] < $goods_num){
-            return ['status'=>-102,'msg'=>'库存不足！','result'=>''];
+        //获取规格
+        $result_sku          = $this->getSkuArr($sku_id,$goods_id);
+        if($result_sku['status'] == 0) return array('status'=>-9,'msg'=>$result_sku['msg'],'result'=>'');
+        if($result_sku['status'] == 1){
+            $goods_sku = $result_sku['goods_sku'];
+            $goods['store_count']     = $goods_sku['store_count'];
+            $goods['goods_price']     = $goods_sku['price'];
+            $goods['hire_price']      = $goods_sku['hire_price'];
+        }
+        if($goods_num > $goods['store_count']){
+            return ['status'=>-102,'msg'=>'数量不足,请与客服联系！','result'=>''];
         }
         $goods['buy_num'] = $goods_num;
-
-        //产品超出存库
-        if($goods_num > $goods['store_count']){
-            $goods_num = $goods['store_count'];
-        }
-
-        Db::name('cart')->where(['user_id'=>$user_id,'type'=>1])->delete();
-        $data = array(
+        $data = [
             'user_id'          => $user_id,   // 用户id
             'goods_id'         => $goods_id,   // 产品id
             'goods_sn'         => $goods['goods_sn'],   // 产品货号
             'goods_name'       => $goods['goods_name'],   // 产品名称
             'goods_price'      => $goods['shop_price'],  // 购买价
+            'hire_price'       => $goods['hire_price'],
             'goods_img'        => $goods['goods_img'],
             'supplier_id'      => $goods['supplier_id'],
             'goods_num'        => $goods_num, // 购买数量
             'add_time'         => time(), // 加入购物车时间
             'type'             => 1,
             'buy_type'         => $buy_type
-        );
+        ];
+
         if($buy_type == 0){
             $data['start_time'] = strtotime($param['start_time']);
             $data['end_time']   = strtotime($param['end_time'].' 23:59:59');
+            $service = new SkuServer();
+            $res_sku = $service->checkCount($goods_id,$sku_id,$data['start_time'],$data['end_time'],$goods_num);
+            if($res_sku['code'] == 0)  return ['status'=>-2,'msg'=>$res_sku['msg']];
         }
         if(!empty($goods_sku)){
             $data['sku_id']         = $goods_sku['sku_id'];
             $data['spec_path']      = $goods_sku['item_path'];
             $data['spec_item_name'] = $goods_sku['spec_item_name'];
         }
-        $insert_id = DB::name('Cart')->insert($data);
+
+
+
+        Db::name('cart')->where(['user_id'=>$user_id,'type'=>1])->delete();
+        DB::name('Cart')->insert($data);
+
         return array('status'=>1);
     }
 
@@ -332,12 +333,12 @@ class CartLogic extends Relation
             if(!$address)return array('status'=>-9,'msg'=>'请填写收货地址！','result'=>NULL);
         }
 
-        $param = request()->param();
-
-        $cart_price = $this->getTotalPrice($user_id,$type);
-
+        
         $pay_code = $param['pay_code'];
-        $pay_name = $pay_code=='wxpay'?'微信支付':($pay_code=='balance'?'余额支付':'支付宝支付');
+        $pay_name = $pay_code=='wxpay'?'微信支付':($pay_code=='balance'?'余额支付':($pay_code=='cash'?'现金支付':'支付宝支付'));
+        
+        $cart_price = $this->getTotalPrice($user_id,$type,$pay_code);
+
         if($pay_code == 'balance'){
             $balance = Db::name('user')->where('id',$user_id)->value('balance');
             if($balance < $cart_price['cut_fee']){
@@ -351,8 +352,6 @@ class CartLogic extends Relation
         try {
 
 
-            $coupon_price = 0;
-
             $result_sn = $order_sn = get_order_sn();
             $pay_data = [
                 'amount'   => $cart_price['cut_fee'],
@@ -364,7 +363,8 @@ class CartLogic extends Relation
                 'user_id'  => $user_id
             ];
             $pay_id = Db::name('pay_log')->insertGetId($pay_data);
-
+            
+            $order_status = $pay_code == 'cash'?0:1;
             $data = [
                 'order_sn'      => $order_sn, // 订单编号
                 'user_id'       => $user_id, //用户id
@@ -378,12 +378,12 @@ class CartLogic extends Relation
                 'goods_price'   => $cart_price['total_fee'],//'产品总价'
                 'order_amount'  => $cart_price['cut_fee'],//'应付款金额',暂无优惠券运费等金额
                 'total_amount'  => $cart_price['total_fee'],
-                'coupon_price'  => $coupon_price,
+                'coupon_price'  => $cart_price['coupon_price'],
                 'shipping_price'=> '',
                 'send_type'     => $send_type,
                 'add_time'      => $time, //下单时间
                 'coupon_id'     => $coupon_id,
-                'order_status'  => 1,
+                'order_status'  => $order_status,
                 'user_note'     => $param['note'],
                 'pay_status'    => 0,
                 'pay_code'      => $pay_code,
@@ -397,14 +397,20 @@ class CartLogic extends Relation
             $order_id = Db::name("Order")->insertGetId($data);
 
             // 记录订单操作日志
-
+            $service = new SkuServer();
             //立即下单
             if($type == 1){
 
                 $s_goods = Db::name('Cart')->field('goods_id,hire_price,goods_name,goods_sn,goods_num,goods_img,spec_item_name,spec_path,goods_price,member_goods_price,supplier_id,start_time,end_time,buy_type')->where(['user_id'=>$user_id,'type'=>1])->find();
-
                 //直接购买加入订单
-                $s_goods['goods_price'] = $s_goods['buy_type']==0?$s_goods['hire_price']:$s_goods['goods_price'];
+                if($s_goods['buy_type']==0){
+                    $res_sku = $service->checkCount($s_goods['goods_id'],$s_goods['sku_id'],$s_goods['start_time'],$s_goods['end_time'],$s_goods['goods_num']);
+                    if($res_sku['code'] == 0){
+                        throw new \Exception($res_sku['msg']);
+                    }
+                    $s_goods['goods_price'] = $s_goods['hire_price'];
+                }
+
                 $s_goods['order_id']    = $order_id; // 订单id
                 $s_goods['use_day']     = $cart_price['use_day'];
                 $s_goods['goods_total'] = $s_goods['goods_price']*$s_goods['goods_num'];
@@ -417,12 +423,18 @@ class CartLogic extends Relation
             }else{
 
                 //购物车加入订单
-                $where = ['user_id'=>$user_id,'selected'=>1];
+                $where = ['user_id'=>$user_id,'selected'=>1,'type'=>0];
                 $goods_name = [];
                 $cartList = Db::name('Cart')->field('goods_id,hire_price,goods_name,goods_sn,goods_num,goods_img,spec_item_name,spec_path,goods_price,member_goods_price,supplier_id,start_time,end_time,buy_type')->where($where)->select();
                 foreach($cartList as $k=>$v)
                 {
-                    $v['goods_price'] = $v['buy_type']==0?$v['hire_price']:$v['goods_price'];
+                    if($v['buy_type']==0){
+                        $res_sku = $service->checkCount($v['goods_id'],$v['sku_id'],$v['start_time'],$v['end_time'],$v['goods_num']);
+                        if($res_sku['code'] == 0){
+                            throw new \Exception($res_sku['msg']);
+                        }
+                        $v['goods_price'] = $v['hire_price'];
+                    }
                     $v['order_id']    = $order_id; // 订单id
                     $v['use_day']     = $cart_price['use_day']; // 订单id
                     $v['goods_total'] = $v['goods_price']*$v['goods_num'];

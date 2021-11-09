@@ -22,6 +22,13 @@ class GoodsModel extends Model {
 	{
 	    return cmf_get_image_url($value);
 	}
+	
+	public function getShopPriceAttr($value)
+	{
+	    return del0($value);
+	}
+	
+	
 
 
     public function getPhotoAttr($value)

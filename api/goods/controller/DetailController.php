@@ -9,6 +9,7 @@
 namespace api\goods\controller;
 
 
+use api\goods\service\SkuServer;
 use think\Db;
 use cmf\controller\RestBaseController;
 use api\goods\model\GoodsModel as Goods;
@@ -70,6 +71,21 @@ class DetailController extends RestBaseController
             $this->error('无规格');
        }
 
+    }
+
+    /**
+     * 获取每日库存
+     */
+    public function getCount(){
+
+        $goods_id = request()->param('id',0,'intval');
+        $sku_id   = request()->param('sku_id',0,'intval');
+        $service = new SkuServer();
+        $start_time = strtotime(date("Y-m-d",time()));
+        $end_time   = strtotime(date("Y-m-1 00:00:00", strtotime("+2 month")))-1;
+        $result  = $service->dateCount($goods_id,$sku_id,$start_time,$end_time);
+
+        $this->success('ok',$result);
     }
 
     public function addComment(){

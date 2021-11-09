@@ -3238,3 +3238,175 @@ Request-ID: 08A6F1848B0610F50618869BE64820B62C28DC9803-0, 08A6F1848B0610EE0618EC
 </xml>
 --------
 NULL  
+[2021-10-19T12:55:47.283022+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 498
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1607489851</mch_id><nonce_str><![CDATA[616e4fd307edf]]></nonce_str><out_trade_no><![CDATA[AA19193467495268]]></out_trade_no><total_fee>16000</total_fee><spbill_create_ip><![CDATA[117.32.138.243]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[undefined]]></openid><appid><![CDATA[wxa28549fc9910295d]]></appid><sign><![CDATA[747E687D5D7F4D62F83B93A5A1F53F0B]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Tue, 19 Oct 2021 04:55:51 GMT
+Content-Type: text/plain
+Content-Length: 206
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08D79FB98B06102218CCB78A4820ED800328E7DE02-268435461, 08D79FB98B06102518E8B6C05520DB672894DB02-0
+
+<xml><return_code><![CDATA[FAIL]]></return_code>
+<return_msg><![CDATA[输入源“/body/xml/body”映射到字段“商品描述”必填性规则校验失败，此字段为必填项]]></return_msg>
+</xml>
+--------
+NULL  
+[2021-10-20T16:58:00.511206+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 497
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1607489851</mch_id><nonce_str><![CDATA[616fda1834c74]]></nonce_str><out_trade_no><![CDATA[AA20202799430127]]></out_trade_no><total_fee>12000</total_fee><spbill_create_ip><![CDATA[117.35.132.47]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[undefined]]></openid><appid><![CDATA[wxa28549fc9910295d]]></appid><sign><![CDATA[CD4ECF42F30265CEAAF596C9D0B1D510]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Wed, 20 Oct 2021 08:58:04 GMT
+Content-Type: text/plain
+Content-Length: 206
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 089CB4BF8B0610F10618BCC8C055208FDE0628B93A-268435461, 089CB4BF8B0610EF0618E8B6C05520E3A708289BD403-0
+
+<xml><return_code><![CDATA[FAIL]]></return_code>
+<return_msg><![CDATA[输入源“/body/xml/body”映射到字段“商品描述”必填性规则校验失败，此字段为必填项]]></return_msg>
+</xml>
+--------
+NULL  
+[2021-10-25T13:37:39.485770+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 565
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[617642a300e5d]]></nonce_str><body><![CDATA[泡雕贝壳,镂丝花器]]></body><out_trade_no><![CDATA[AA25402587800199]]></out_trade_no><total_fee>16000</total_fee><spbill_create_ip><![CDATA[117.35.135.4]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[2521FF5575BAF35EE1E832ED0785C5AB]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 25 Oct 2021 05:37:46 GMT
+Content-Type: text/plain
+Content-Length: 456
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08AA85D98B06108102188BDA8C5820DEF10F28D58101-0, 08AA85D98B0610FD0118CACBC05520BEAD0828819001-0
+
+<xml><return_code><![CDATA[SUCCESS]]></return_code>
+<return_msg><![CDATA[OK]]></return_msg>
+<result_code><![CDATA[SUCCESS]]></result_code>
+<mch_id><![CDATA[1615463112]]></mch_id>
+<appid><![CDATA[wxa2218649def4a7c4]]></appid>
+<nonce_str><![CDATA[Iq4l1aSzrDVwjPHI]]></nonce_str>
+<sign><![CDATA[A895835BC22B9762DE762BF267D536AE]]></sign>
+<prepay_id><![CDATA[wx25133746417885b33120222b0679cd0000]]></prepay_id>
+<trade_type><![CDATA[JSAPI]]></trade_type>
+</xml>
+--------
+NULL  
+[2021-10-25T14:16:05.843633+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 565
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[61764ba569421]]></nonce_str><body><![CDATA[泡雕贝壳,镂丝花器]]></body><out_trade_no><![CDATA[AA25402587800199]]></out_trade_no><total_fee>16000</total_fee><spbill_create_ip><![CDATA[117.35.135.4]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[525A561DA3C68D518DD4465C2928D122]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 25 Oct 2021 06:16:12 GMT
+Content-Type: text/plain
+Content-Length: 456
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08AC97D98B0610A40518B5C5EEA30620E9990128F7D001-0, 08AC97D98B0610A00518D2B7C05520CFA708288C9006-0
+
+<xml><return_code><![CDATA[SUCCESS]]></return_code>
+<return_msg><![CDATA[OK]]></return_msg>
+<result_code><![CDATA[SUCCESS]]></result_code>
+<mch_id><![CDATA[1615463112]]></mch_id>
+<appid><![CDATA[wxa2218649def4a7c4]]></appid>
+<nonce_str><![CDATA[548mypP16pW36X3M]]></nonce_str>
+<sign><![CDATA[6DD525060E753658EA716D9788931F3A]]></sign>
+<prepay_id><![CDATA[wx25141612794971b33120222bc677570000]]></prepay_id>
+<trade_type><![CDATA[JSAPI]]></trade_type>
+</xml>
+--------
+NULL  
+[2021-10-28T15:48:18.736026+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 595
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[617a55c24f38f]]></nonce_str><body><![CDATA[六边形喜字屏风,六边形喜字屏风,泡雕贝壳]]></body><out_trade_no><![CDATA[AA28072980783193]]></out_trade_no><total_fee>44000</total_fee><spbill_create_ip><![CDATA[1.80.82.174]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[980141895FB3C6D57DFD66845E9E5987]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 28 Oct 2021 07:48:27 GMT
+Content-Type: text/plain
+Content-Length: 456
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08CBABE98B0610A10118CCB78A4820FB9A1328808F04-0, 08CBABE98B0610A701188FC2EEA30620B6850328E5F101-0
+
+<xml><return_code><![CDATA[SUCCESS]]></return_code>
+<return_msg><![CDATA[OK]]></return_msg>
+<result_code><![CDATA[SUCCESS]]></result_code>
+<mch_id><![CDATA[1615463112]]></mch_id>
+<appid><![CDATA[wxa2218649def4a7c4]]></appid>
+<nonce_str><![CDATA[eIq1cmPM12ozShLd]]></nonce_str>
+<sign><![CDATA[A02D56BFD9460F8F2F8C2AC932D8B191]]></sign>
+<prepay_id><![CDATA[wx28154827316607376974e64d03c5cc0000]]></prepay_id>
+<trade_type><![CDATA[JSAPI]]></trade_type>
+</xml>
+--------
+NULL  
+[2021-10-28T15:57:22.063444+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 564
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[617a57e18de6a]]></nonce_str><body><![CDATA[泡雕贝壳,测试产品]]></body><out_trade_no><![CDATA[AA28078412991826]]></out_trade_no><total_fee>20000</total_fee><spbill_create_ip><![CDATA[1.80.82.174]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[C5D1794AE5C1A77FF38FE57D3966CEDF]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 28 Oct 2021 07:57:30 GMT
+Content-Type: text/plain
+Content-Length: 456
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08EAAFE98B0610DA0318E3DAEEA30620D6EB0C2882AF01-0, 08EAAFE98B0610DA031890E0EEA30620BCCF0528E6F803-0
+
+<xml><return_code><![CDATA[SUCCESS]]></return_code>
+<return_msg><![CDATA[OK]]></return_msg>
+<result_code><![CDATA[SUCCESS]]></result_code>
+<mch_id><![CDATA[1615463112]]></mch_id>
+<appid><![CDATA[wxa2218649def4a7c4]]></appid>
+<nonce_str><![CDATA[uwiIe1VXqMYWzzvD]]></nonce_str>
+<sign><![CDATA[2119AC6AEBE6E910EFAB651D8E5C0A30]]></sign>
+<prepay_id><![CDATA[wx28155730628803e5ce67ab94bd98300000]]></prepay_id>
+<trade_type><![CDATA[JSAPI]]></trade_type>
+</xml>
+--------
+NULL  

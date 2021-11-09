@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 namespace api\goods\controller;
 
+use api\goods\service\SkuServer;
 use think\Db;
 use cmf\controller\RestBaseController;
 use api\goods\model\GoodsModel as Goods;
@@ -50,11 +51,13 @@ class CartController extends RestBaseController
     /*获取结算金额*/
     public function getTotalPrice(){
 
-        $type    = $this->request->param('type',0,'intval');
+        $type     = request()->param('type',0,'intval');
+        $pay_code = request()->param('pay_code');
+      
         $userId  = $this->getUserId();
 
         $cartLogic   = new CartLogic;
-        $total_price = $cartLogic->getTotalPrice($userId,$type);
+        $total_price = $cartLogic->getTotalPrice($userId,$type,$pay_code);
         $this->success('ok',$total_price);
     }
     /** 加入购物车
@@ -67,17 +70,11 @@ class CartController extends RestBaseController
         $param     = request()->param();
         $goods_id  = request()->param('goods_id', 0, 'intval');
         $type      = request()->post('type', 0, 'intval');   //加入购物车、立即购买
-        $num_type  = request()->post('num_type', 0, 'intval');
         $goods_num = request()->param('goods_num', 0, 'intval');
         $buy_type  = request()->param('buy_type');
-        $start_time  = request()->param('start_time');
-        $end_time    = request()->param('end_time');
 
         $sku_id = request()->post('sku_id');
-        if(empty($goods_num)){
-            $goods_num = $num_type == 1?1:-1;
-        }
-
+        
         $cartLogic = new CartLogic();
         if($type == 0){
 
@@ -164,10 +161,14 @@ class CartController extends RestBaseController
     }
 	
 	public function updateCart(){
+	    
         $param    = request()->param();
         $buy_type = request()->param('buy_type');
         $user_id  = $this->getUserId();
         $buy_type = $buy_type=='rent'?0:1;
+        
+        $is_buy = Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'is_buy'=>0,'selected'=>1])->value('id');
+        
         $update = [
             'buy_type' => $buy_type
         ];
@@ -176,6 +177,18 @@ class CartController extends RestBaseController
             if(empty($param['end_time']))    $this->error('请选择结束时间');
             $update['start_time'] = strtotime($param['start_time']);
             $update['end_time']   = strtotime($param['end_time'].' 23:59:59');
+            $list = Db::name('cart')->field('goods_id,sku_id,start_time,end_time,goods_num')->where(['type' => 0,'user_id' => $user_id,'selected'=>1])->select();
+            $service = new SkuServer();
+            foreach ($list as $v){
+                $res_sku = $service->checkCount($v['goods_id'],$v['sku_id'],$update['start_time'],$update['end_time'],$v['goods_num']);
+                if($res_sku['code'] == 0){
+                    $this->error($res_sku['msg']);
+                    return;
+                }
+            }
+
+        }else if(!empty($is_buy)){
+            $this->error('存在不可购买产品');
         }
         Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'selected'=>1])->update($update);
         $this->success('ok');

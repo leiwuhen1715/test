@@ -22,28 +22,6 @@ class IndexController extends RestBaseController
     public function index()
     {
     	
-    	
-    	/*$list = Db::name('user_card')->where('goods_id',4)->select();
-    	foreach ($list as $vo){
-    		$end_time = $vo['start_time'] + 31*24*3600;
-    		Db::name('user_card')->where('id',$vo['id'])->update(['end_time'=>$end_time]);
-    	}*/
-    	//log_score_change(4, '添加',300000);
-    	/*$service = new OfficialService;
-    	$service->template_send(1);*/
-		//开门
-		$sta_time  = strtotime('2021-08-10 18:00:00');
-		$end_time  = strtotime('2021-09-10 23:00:00');
-		$door = new DoorService();
-		$in_data   = [
-			'device_sn' => 2358992010,
-			'start'     => $sta_time,
-			'end'       => $end_time,
-		];
-		
-		$res = $door->text_rule_b($in_data,0);
-		
-		echo "<img src='".cmf_get_image_url($res)."'>";
 		
         
     }

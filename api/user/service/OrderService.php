@@ -103,6 +103,9 @@ class OrderService
         $data['caozuo'] ='';
         if($data['order_status']==3){
 
+            $data['status']='待确认';
+        }elseif($data['order_status']==3){
+
             if($data['refun_status'] == 0){
                 $data['status']='退款中';
             }elseif($data['refun_status'] == 1){

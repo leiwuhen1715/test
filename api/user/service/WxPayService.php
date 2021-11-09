@@ -11,7 +11,7 @@
 namespace api\user\service;
 
 use EasyWeChat\Factory;
-use think\Log;
+use think\facade\Log;
 use think\Db;
 use think\db\Query;
 
@@ -22,10 +22,10 @@ class WxPayService
     function __construct() {
 
         $config = [
-            'app_id'             => 'wxa28549fc9910295d',
+            'app_id'             => 'wxa2218649def4a7c4',
             'secret'			 => '',
-    	    'mch_id'             => '1607489851',
-    	    'key'                => 'DUsKXMvIEgWjABgb3nw8IJjTnc23O9Cc',
+    	    'mch_id'             => '1615463112',
+    	    'key'                => 'ize0VrXBGySH7q1GA7nmTeQhy6WrQh0o',
     	    'cert_path'          => CMF_DATA.'cert/wechat/apiclient_cert.pem', // XXX: 绝对路径！！！！
     	    'key_path'           => CMF_DATA.'cert/wechat/apiclient_key.pem',      // XXX: 绝对路径！！！！
     	    'notify_url'         => '',     // 你也可以在下单时单独设置来想覆盖它
