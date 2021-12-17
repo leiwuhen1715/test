@@ -39,7 +39,7 @@ class OrderLogic extends Relation
 
 
       if($os == 0 && $sh == 0 && $pay == 0){
-        $btn['confirm'] = '确定';
+        $btn['confirm'] = '确定支付';
         //$btn['pay'] = '付款';
         //$btn['return'] = '取消';
       }elseif($os == 1 && $sh == 0 && $pay == 0){
@@ -60,7 +60,7 @@ class OrderLogic extends Relation
           }
 
       }elseif($os == 0 && $sh == 0 && $pay == 1){
-        $btn['confirm'] = '确定';
+        //$btn['confirm'] = '确定';
         $btn['nopay'] = '未付款';
         $btn['return'] = '取消';
       }elseif($os == 0 && $sh == 0 && $pay == 3){

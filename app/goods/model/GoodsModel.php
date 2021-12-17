@@ -82,7 +82,8 @@ class GoodsModel extends Model {
             if(!empty($dataList)){
                 DB::name('GoodsSku')->insertAll($dataList);
             }
-        
+            $goods_num = Db::name('goods_sku')->where('goods_id',$goods_id)->sum('store_count');
+            Db::name('goods')->where('goods_id',$goods_id)->update(['store_count'=>$goods_num]);
         }else{
             Db::name('GoodsSku')->where('goods_id',$goods_id)->delete();
         }

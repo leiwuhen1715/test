@@ -63,16 +63,23 @@ class AdminIndexController extends AdminBaseController
             return $content;
         }
 		$param = request()->param();
+        $user_type = request()->param('user_type',0,'intval');
 		$join = [
 			['user f','u.f_id = f.id','left']
 		];
         $list = Db::name('user')->alias('u')->field('u.*,f.user_nickname as f_nickname')->join($join)
             ->where(function (Query $query) {
                 $data = $this->request->param();
-                if (!empty($data['uid'])) {
-                    $query->where('u.id', intval($data['uid']));
-                }
+                $query->where('u.user_type', 2);
 
+
+                if (!empty($data['user_type'])) {
+                    if($data['user_type'] == 1){
+                        $query->where('u.balance','>',0);
+                    }elseif($data['user_type'] == 2){
+                        $query->where('u.balance', 0);
+                    }
+                }
                 if (!empty($data['keyword'])) {
                     $keyword = $data['keyword'];
                     $query->where('u.user_login|u.user_nickname|u.user_email|u.mobile', 'like', "%$keyword%");
@@ -81,9 +88,15 @@ class AdminIndexController extends AdminBaseController
             })
             ->order("u.create_time DESC")
             ->paginate(10);
+
         $list->appends($param);
         // 获取分页显示
         $page = $list->render();
+        foreach($list as $vo){
+            $total_balance = Db::name('user_balance_log')->where('user_id',$vo['id'])->where('change','>',0)->sum('change');
+            Db::name('user')->where('id',$vo['id'])->update(['total_balance'=>$total_balance]);
+        }
+        $this->assign('user_type', $user_type);
         $this->assign('list', $list);
         $this->assign('page', $page);
         // 渲染模板输出
@@ -156,6 +169,17 @@ class AdminIndexController extends AdminBaseController
 	
 	    return $this->fetch();
 	}
+
+    public function info(){
+
+        $id   = input('param.id', 0, 'intval');
+
+        $data = Db::name("User")->alias('u')->field('u.*')->where(["u.id"=>$id])->find();
+
+        $this->assign("data",$data);
+
+        return $this->fetch();
+    }
 	
     /**
      * 本站用户拉黑
@@ -233,5 +257,25 @@ class AdminIndexController extends AdminBaseController
         
         
         return $this->fetch();
+    }
+
+    public function balance(){
+
+        $user_id = request()->param('user_id',0,'intval');
+        $limit = request()->param('limit',10,'intval');
+        $page = request()->param('page',1,'intval');
+
+        $where = [];
+        if($user_id) $where[] = ['c.user_id','=',$user_id];
+
+        $count = Db::name('user_balance')->alias('c')->where($where)->count();
+        $list  = Db::name('user_balance')->alias('c')->where($where)->order(['id'=>'desc'])->page($page,$limit)->select()->each(function($item){
+            $item['create_time'] = date('Y-m-d H:i:s',$item['create_time']);
+
+            return $item;
+        });
+
+        $result = ['code'=>0,'count'=>$count,'data'=>$list];
+        die(json_encode($result));
     }
 }

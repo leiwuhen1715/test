@@ -2,6 +2,7 @@
 
 namespace app\goods\controller;
 
+use api\user\service\PayService;
 use app\goods\model\OrderModel;
 use cmf\controller\AdminBaseController;
 use app\goods\logic\OrderLogic;
@@ -175,16 +176,10 @@ class AdminOrderController extends AdminBaseController {
 			switch($type){
 				case 'confirm':
 					$updata['order_status'] = 1;
-					$note = empty($note) ? '订单确认' : $note;
-					$goods_arr= Db::name('order_sub')->field('goods_id')->where('order_id',$order_id)->select();
-					foreach ($goods_arr as $key => $value) {
-						Db::name('goods')->where('goods_id',$value['goods_id'])->setInc('sales_sum');
-						$store_count = Db::name('goods')->where('goods_id',$value['goods_id'])->value('store_count');
-						if($store_count > 0){
-							$res = Db::name('goods')->where('goods_id',$value['goods_id'])->setDec('store_count');
-						}
-						
-					}
+					$note = empty($note) ? '订单确认支付' : $note;
+
+					$service = new PayService();
+                    $service->shopPay($order['order_sn']);
 					break;
 				case 'cancel':
 					$updata['order_status'] = 0;
@@ -247,8 +242,11 @@ class AdminOrderController extends AdminBaseController {
 					return true;
 			}			
 			$result = DB::name('Order')->where("order_id",$order_id)->update($updata);
-			$admin_id = cmf_get_current_admin_id();
-			logOrder($order_id,$note,$type,$admin_id);
+			if($type != 'confirm'){
+                $admin_id = cmf_get_current_admin_id();
+                logOrder($order_id,$note,$type,$admin_id);
+            }
+
 			
 			if($result){
 				$this->success('操作成功',url('AdminOrder/detail',["order_id"=>$order_id]));

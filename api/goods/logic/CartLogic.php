@@ -255,6 +255,11 @@ class CartLogic extends Relation
             $goods['goods_price']     = $goods_sku['price'];
             $goods['hire_price']      = $goods_sku['hire_price'];
         }
+        $time = time();
+        $count = Db::name('goods_count')->where(['goods_id'=>$goods_id,'sku_id'=>$sku_id])->where('date_time','>',$time)->sum('sell_count');
+        if($count > 0){
+            $goods['store_count'] = $goods['store_count']-$count;
+        }
         if($goods_num > $goods['store_count']){
             return ['status'=>-102,'msg'=>'数量不足,请与客服联系！','result'=>''];
         }
@@ -401,7 +406,7 @@ class CartLogic extends Relation
             //立即下单
             if($type == 1){
 
-                $s_goods = Db::name('Cart')->field('goods_id,hire_price,goods_name,goods_sn,goods_num,goods_img,spec_item_name,spec_path,goods_price,member_goods_price,supplier_id,start_time,end_time,buy_type')->where(['user_id'=>$user_id,'type'=>1])->find();
+                $s_goods = Db::name('Cart')->field('goods_id,hire_price,goods_name,goods_sn,goods_num,goods_img,spec_item_name,spec_path,goods_price,member_goods_price,supplier_id,start_time,end_time,buy_type,sku_id')->where(['user_id'=>$user_id,'type'=>1])->find();
                 //直接购买加入订单
                 if($s_goods['buy_type']==0){
                     $res_sku = $service->checkCount($s_goods['goods_id'],$s_goods['sku_id'],$s_goods['start_time'],$s_goods['end_time'],$s_goods['goods_num']);
@@ -409,6 +414,20 @@ class CartLogic extends Relation
                         throw new \Exception($res_sku['msg']);
                     }
                     $s_goods['goods_price'] = $s_goods['hire_price'];
+                }else{
+                    if($s_goods['sku_id'] > 0){
+                        $store_count = Db::name('goods_sku')->where(['goods_id'=>$s_goods['goods_id'],'sku_id'=>$s_goods['sku_id']])->value('store_count');
+                    }else{
+                        $store_count = Db::name('goods')->where('goods_id',$s_goods['goods_id'])->value('store_count');
+                    }
+                    
+                    $count = Db::name('goods_count')->where(['goods_id'=>$s_goods['goods_id'],'sku_id'=>$s_goods['sku_id']])->where('date_time','>',$time)->sum('sell_count');
+                    if($count > 0){
+                        $store_count = $store_count-$count;
+                    }
+                    if($store_count < $s_goods['goods_num']){
+                        throw new \Exception($s_goods['goods_name'].'库存不足，请与客服联系');
+                    }
                 }
 
                 $s_goods['order_id']    = $order_id; // 订单id
@@ -416,7 +435,7 @@ class CartLogic extends Relation
                 $s_goods['goods_total'] = $s_goods['goods_price']*$s_goods['goods_num'];
                 Db::name("OrderSub")->strict(false)->insert($s_goods);
                 Db::name('Cart')->where(['user_id'=>$user_id,'type'=>1])->delete();
-
+                Db::name('pay_log')->where('id',$pay_id)->update(['goods_name'=>$s_goods['goods_name']]);
                 logOrder($order_id,'下单成功','add',$user_id);
 
 
@@ -425,7 +444,7 @@ class CartLogic extends Relation
                 //购物车加入订单
                 $where = ['user_id'=>$user_id,'selected'=>1,'type'=>0];
                 $goods_name = [];
-                $cartList = Db::name('Cart')->field('goods_id,hire_price,goods_name,goods_sn,goods_num,goods_img,spec_item_name,spec_path,goods_price,member_goods_price,supplier_id,start_time,end_time,buy_type')->where($where)->select();
+                $cartList = Db::name('Cart')->field('goods_id,hire_price,goods_name,goods_sn,goods_num,goods_img,spec_item_name,spec_path,goods_price,member_goods_price,supplier_id,start_time,end_time,buy_type,sku_id')->where($where)->select();
                 foreach($cartList as $k=>$v)
                 {
                     if($v['buy_type']==0){
@@ -434,6 +453,21 @@ class CartLogic extends Relation
                             throw new \Exception($res_sku['msg']);
                         }
                         $v['goods_price'] = $v['hire_price'];
+                    }else{
+                    
+                        if($v['sku_id'] > 0){
+                            $store_count = Db::name('goods_sku')->where(['goods_id'=>$v['goods_id'],'sku_id'=>$v['sku_id']])->value('store_count');
+                        }else{
+                            $store_count = Db::name('goods')->where('goods_id',$v['goods_id'])->value('store_count');
+                        }
+                        
+                        $count = Db::name('goods_count')->where(['goods_id'=>$v['goods_id'],'sku_id'=>$v['sku_id']])->where('date_time','>',$time)->sum('sell_count');
+                        if($count > 0){
+                            $store_count = $store_count-$count;
+                        }
+                        if($store_count < $v['goods_num']){
+                            throw new \Exception($v['goods_name'].'库存不足，请与客服联系');
+                        }
                     }
                     $v['order_id']    = $order_id; // 订单id
                     $v['use_day']     = $cart_price['use_day']; // 订单id

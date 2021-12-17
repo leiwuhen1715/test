@@ -3410,3 +3410,185 @@ Request-ID: 08EAAFE98B0610DA0318E3DAEEA30620D6EB0C2882AF01-0, 08EAAFE98B0610DA03
 </xml>
 --------
 NULL  
+[2021-12-03T17:28:55.615041+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 515
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[61a9e3573bc9d]]></nonce_str><out_trade_no><![CDATA[AC03237343798497]]></out_trade_no><total_fee>8000</total_fee><spbill_create_ip><![CDATA[117.35.132.81]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[B624BE3637744C790AE24DF9219ED4BB]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 03 Dec 2021 09:29:23 GMT
+Content-Type: text/plain
+Content-Length: 206
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08F3C6A78D0610E90118BC8C924820BCA30D28911F-268435461, 08F3C6A78D0610E8011884A8C05520D6A90128C8A403-0
+MMLAS-VERIFYRESULT: CAI=
+
+<xml><return_code><![CDATA[FAIL]]></return_code>
+<return_msg><![CDATA[输入源“/body/xml/body”映射到字段“商品描述”必填性规则校验失败，此字段为必填项]]></return_msg>
+</xml>
+--------
+NULL  
+[2021-12-03T17:31:45.484473+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 515
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[61a9e40133b74]]></nonce_str><out_trade_no><![CDATA[AC03237343798497]]></out_trade_no><total_fee>8000</total_fee><spbill_create_ip><![CDATA[117.35.132.81]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[B319BFC408F9B7D9333A9B27E535FDD7]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 03 Dec 2021 09:32:13 GMT
+Content-Type: text/plain
+Content-Length: 206
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 089DC8A78D0610BB0118CCB78A48208DF51028DAE403-268435461, 089DC8A78D0610B6011899E0EEA30620C1CE03289605-0
+MMLAS-VERIFYRESULT: CAI=
+
+<xml><return_code><![CDATA[FAIL]]></return_code>
+<return_msg><![CDATA[输入源“/body/xml/body”映射到字段“商品描述”必填性规则校验失败，此字段为必填项]]></return_msg>
+</xml>
+--------
+NULL  
+[2021-12-03T17:33:33.747928+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 515
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[61a9e46d77523]]></nonce_str><out_trade_no><![CDATA[AC03237343798497]]></out_trade_no><total_fee>8000</total_fee><spbill_create_ip><![CDATA[117.35.132.81]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[8816BD96D55C2EF7017DC03E0C42540A]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 03 Dec 2021 09:34:01 GMT
+Content-Type: text/plain
+Content-Length: 206
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 0889C9A78D0610C10318A7BD8C582095920C289FED01-268435461, 0889C9A78D0610BC0318EADBEEA30620FBF10428E0E302-0
+MMLAS-VERIFYRESULT: CAI=
+
+<xml><return_code><![CDATA[FAIL]]></return_code>
+<return_msg><![CDATA[输入源“/body/xml/body”映射到字段“商品描述”必填性规则校验失败，此字段为必填项]]></return_msg>
+</xml>
+--------
+NULL  
+[2021-12-03T17:33:51.413755+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 515
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[61a9e47f278f7]]></nonce_str><out_trade_no><![CDATA[AC03237343798497]]></out_trade_no><total_fee>8000</total_fee><spbill_create_ip><![CDATA[117.35.132.81]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[CBA1E261CBF72B1BB10D57833C2023A0]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 03 Dec 2021 09:34:19 GMT
+Content-Type: text/plain
+Content-Length: 206
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 089BC9A78D06107418F1C28C5820FBD00D28BFE202-268435461, 089BC9A78D06107118F7B7C05520ACAC0328FFC403-0
+MMLAS-VERIFYRESULT: CAI=
+
+<xml><return_code><![CDATA[FAIL]]></return_code>
+<return_msg><![CDATA[输入源“/body/xml/body”映射到字段“商品描述”必填性规则校验失败，此字段为必填项]]></return_msg>
+</xml>
+--------
+NULL  
+[2021-12-03T17:34:00.283927+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 515
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[61a9e4880569d]]></nonce_str><out_trade_no><![CDATA[AC03237343798497]]></out_trade_no><total_fee>8000</total_fee><spbill_create_ip><![CDATA[117.35.132.81]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[813250056BE4ECC8C2F68220EE624CDE]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 03 Dec 2021 09:34:28 GMT
+Content-Type: text/plain
+Content-Length: 206
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08A3C9A78D0610D60718B482844F20B1B20C28BDB605-268435461, 08A3C9A78D0610D707189DC6EEA3062083940A28A7B404-0
+MMLAS-VERIFYRESULT: CAI=
+
+<xml><return_code><![CDATA[FAIL]]></return_code>
+<return_msg><![CDATA[输入源“/body/xml/body”映射到字段“商品描述”必填性规则校验失败，此字段为必填项]]></return_msg>
+</xml>
+--------
+NULL  
+[2021-12-03T17:34:22.502184+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 515
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[61a9e49e398d8]]></nonce_str><out_trade_no><![CDATA[AC03237343798497]]></out_trade_no><total_fee>8000</total_fee><spbill_create_ip><![CDATA[117.35.132.81]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[86D410E24165DBF8CC776D2B1CB05EF5]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 03 Dec 2021 09:34:50 GMT
+Content-Type: text/plain
+Content-Length: 206
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08BAC9A78D0610CC0118D8BAE44820D5BA0C28FBDA04-268435461, 08BAC9A78D0610C60118EADBEEA306209DAB0A28E19D03-0
+MMLAS-VERIFYRESULT: CAI=
+
+<xml><return_code><![CDATA[FAIL]]></return_code>
+<return_msg><![CDATA[输入源“/body/xml/body”映射到字段“商品描述”必填性规则校验失败，此字段为必填项]]></return_msg>
+</xml>
+--------
+NULL  
+[2021-12-03T17:36:38.368798+08:00] EasyWeChat.INFO: >>>>>>>>
+POST /pay/unifiedorder HTTP/1.1
+Content-Length: 553
+User-Agent: GuzzleHttp/7
+Host: api.mch.weixin.qq.com
+
+<xml><mch_id>1615463112</mch_id><nonce_str><![CDATA[61a9e525ded72]]></nonce_str><body><![CDATA[泡雕贝壳]]></body><out_trade_no><![CDATA[AC03241976740304]]></out_trade_no><total_fee>16000</total_fee><spbill_create_ip><![CDATA[117.35.132.81]]></spbill_create_ip><notify_url><![CDATA[https://jsyy.snmykj.com/api/home/notify/wxpay]]></notify_url><trade_type><![CDATA[JSAPI]]></trade_type><openid><![CDATA[orpz55GYZ4WCpDev7qy7_Qa9m2PI]]></openid><appid><![CDATA[wxa2218649def4a7c4]]></appid><sign><![CDATA[C5F3744976B0072B0E30090B9AB9DF66]]></sign></xml>
+<<<<<<<<
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 03 Dec 2021 09:37:06 GMT
+Content-Type: text/plain
+Content-Length: 456
+Connection: keep-alive
+Keep-Alive: timeout=8
+Cache-Control: no-cache, must-revalidate
+X-Content-Type-Options: nosniff
+Request-ID: 08C1CAA78D0610EC06189CC0C84B208EB11228BD8906-0, 08C1CAA78D0610E80618ABD28C5820A8CE0128B0C204-0
+MMLAS-VERIFYRESULT: CAI=
+
+<xml><return_code><![CDATA[SUCCESS]]></return_code>
+<return_msg><![CDATA[OK]]></return_msg>
+<result_code><![CDATA[SUCCESS]]></result_code>
+<mch_id><![CDATA[1615463112]]></mch_id>
+<appid><![CDATA[wxa2218649def4a7c4]]></appid>
+<nonce_str><![CDATA[PacB3jqZAjjTrAHe]]></nonce_str>
+<sign><![CDATA[F8A82EC20267E87779C78F39DEC45982]]></sign>
+<prepay_id><![CDATA[wx03173706019210878568441ad0554a0000]]></prepay_id>
+<trade_type><![CDATA[JSAPI]]></trade_type>
+</xml>
+--------
+NULL  

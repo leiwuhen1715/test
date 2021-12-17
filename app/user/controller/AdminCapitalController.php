@@ -32,13 +32,14 @@ class AdminCapitalController extends AdminBaseController
     }
     public function ajax(){
         $param = request()->param();
+        $user_id = request()->param('user_id',0,'intval');
         $limit = request()->param('limit',10,'intval');
         $keyword   = request()->param('keyword');
         $startTime = empty($request['start_time']) ? 0 : strtotime($request['start_time']);
         $endTime   = empty($request['end_time']) ? 0 : strtotime($request['end_time'].' 23:59'); 
 
         $where = [];
-        
+        if($user_id) $where[] = ['c.user_id','=',$user_id];
         if(!empty($startTime) && !empty($endTime)){
             $where[] = ['c.create_time','between',[$startTime,$endTime]];
         }else{
@@ -124,6 +125,7 @@ class AdminCapitalController extends AdminBaseController
             $integral_type = request()->param('integral_type',0,'intval');
             $integral_num  = request()->param('integral_num');
             $remarks       = request()->param('remarks');
+            $discount      = request()->param('discount');
             $type = request()->param('type',0,'intval');
             $array=array(1,2);
 
@@ -139,12 +141,22 @@ class AdminCapitalController extends AdminBaseController
                 $res_status = 0;
                 Db::startTrans(); //开启事务
                 try {
+                    $remarks = '后台：'.$remarks;
                     if($integral_type==2){
 
                         $integral_num=$integral_num*-1;
                         $res = log_balance_change($id, $remarks,$integral_num,0,1);
                     }else{
-
+                        $discount = empty($discount)?0:$discount;
+                        Db::name('user_balance')->insert([
+                            'user_id'       => $id,
+                            'total_balance' => $integral_num,
+                            'balance'       => $integral_num,
+                            'discount'      => $discount,
+                            'description'   => $remarks,
+                            'status'        => 1,
+                            'create_time'   => time()
+                        ]);
                         $res = log_balance_change($id, $remarks,$integral_num,0,1);
                     }
                     $res_status = 1;

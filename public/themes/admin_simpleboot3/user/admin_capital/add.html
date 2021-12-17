@@ -24,19 +24,25 @@
 				          <div class="layui-form-item">
 				            <label class="layui-form-label">类型</label>
 				            <div class="layui-input-inline">
-								<select name="integral_type" required>
-									<option value="0">请选择</option>
+								<select name="integral_type" required  lay-filter="integral_type">
 									<option value="1" >加</option>
 							        <option value="2" >减</option>
 								</select>
 				            </div>
 				          </div>
+						  <div class="layui-form-item" id="discount_content">
+							 <label class="layui-form-label">折扣</label>
+							 <div class="layui-input-block">
+								<input type="number" name="discount" placeholder="请输入折扣" min="0" max="10" class="layui-input">
+							 </div>
+						  </div>
 				          <div class="layui-form-item">
 				            <label class="layui-form-label">数量</label>
 				            <div class="layui-input-block">
 				              <input type="number" name="integral_num" placeholder="请输入数量" class="layui-input">
 				            </div>
 				          </div>
+
 				          <div class="layui-form-item layui-form-text">
 				            <label class="layui-form-label">变更原因</label>
 				            <div class="layui-input-block">
@@ -57,7 +63,22 @@
 	<script src="__STATIC__/js/layui/layui.js"></script>
 	<script>
 		layui.use(['form'], function(){
-		  var form = layui.form
+		  	var form = layui.form;
+			form.on('select(integral_type)', function(data){
+				if(data.value==1){
+					$('#discount_content').show();
+				}else{
+					$('#discount_content').hide();
+				}
+			});
+			form.on('radio(status)', function(data){
+
+				if(data.value==2){
+					$('#refuse_content').show();
+				}else{
+					$('#refuse_content').hide();
+				}
+			});
 		})
 	</script>
 	<script type="text/javascript">

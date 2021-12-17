@@ -65,7 +65,7 @@ class WxPayService
 	public function wxapp_pay($data) {
 		//统一下单接口
 		$notify_url = cmf_get_domain().'/api/home/notify/wxpay';
-		
+	
 		$result = $this->app->order->unify([
 			'body' 				=> $data['goods_name'],
 			'out_trade_no'  	=> $data['out_trade_no'],
@@ -75,6 +75,7 @@ class WxPayService
 			'trade_type' 		=> 'JSAPI', // 请对应换成你的支付方式对应的值类型
 			'openid'			=> $data['openid']
 		]);
+		
 		if ($result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS'){
 			$jssdk  = $this->app->jssdk;
 			$config = $jssdk->bridgeConfig($result['prepay_id'],false);
@@ -82,7 +83,7 @@ class WxPayService
 			
 		}else{
 
-            throw new \Exception($result['err_code_des']);
+            throw new \Exception($result['return_msg']);
 
 		}
 		

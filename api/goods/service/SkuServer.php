@@ -82,7 +82,7 @@ class SkuServer
         if($spec_item){
 
             $spec_name = Db::name('spec')->where('id',$spec_item['spec_id'])->value('spec_name');
-            $str = $spec_name.':'.$spec_name.';';
+            $str = $spec_name.':'.$spec_item['item'].';';
         }
 
 

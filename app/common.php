@@ -51,6 +51,9 @@ function log_balance_change($user_id=0, $description,$change = 0 ,$type = 0,$is_
     /* 更新用户余额 */
     if($change>0){
         DB::name('user')->where("id",$user_id)->setInc('balance',$change);
+        if($is_total == 1){
+            DB::name('user')->where("id",$user_id)->setInc('total_balance',$change);
+        }
     }else{
         $change=-1*$change;
         DB::name('user')->where("id",$user_id)->setDec('balance',$change);

@@ -1,0 +1,103 @@
+<include file="public@new_header"/>
+</head>
+<body>
+	<div class="layui-fluid">
+		<form action="{:url('edit')}" class="layui-form js-ajax-form" method="post">
+			<div class="layui-card layui-row" style="padding: 15px;">
+
+				<div class='layui-col-md6'>
+					<div class="layui-form-item">
+						<label class="layui-form-label">名称</label>
+						<div class="layui-input-block">
+							<input type="text" readonly placeholder="" disabled class="layui-input" value='{$data.user_nickname}'>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">手机</label>
+						<div class="layui-input-block">
+							<input type="text" readonly placeholder="" class="layui-input" value='{$data.mobile}'>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">邮箱</label>
+						<div class="layui-input-block">
+							<input type="text" readonly placeholder="" class="layui-input" value='{$data.user_email}'>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">充值金额</label>
+						<div class="layui-input-block">
+							<input type="text" readonly placeholder="" class="layui-input" value='{$data.total_balance}'>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">余额</label>
+						<div class="layui-input-block">
+							<input type="text" readonly placeholder="" class="layui-input" value='{$data.balance}'>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<!----<button class="layui-btn js-ajax-submit" >立即提交</button>-->
+						</div>
+					</div>
+				</div>
+				<div class='layui-col-md6'>
+					<div class="layui-card-header">充值记录</div>
+					<div class="layui-card-body table-responsive">
+						<table class="layui-hide" id="test" lay-filter="test"></table>
+					</div>
+				</div>
+			</div>
+			<div class="layui-card">
+				<div class="layui-card-header">资金明细</div>
+				<div class="layui-card-body table-responsive">
+					<table class="layui-hide" id="contract"></table>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<include file="public@scripts"/>
+	<script src="__STATIC__/js/layui/layui.js"></script>
+	<script>
+		var user_id = {$data.id};
+		layui.use(['form','table'], function(){
+			var form = layui.form,table = layui.table;
+
+			//操作日志
+			table.render({
+				elem: '#test'
+				,url:"{:cmf_url('balance')}?user_id="+user_id
+				,toolbar:"#test-table-totalRow-toolbarDemo"
+				,cols: [[
+					{field:'id', width:80, title: 'ID', sort: true}
+					,{field:'total_balance', title: '总金额'}
+					,{field:'balance', title: '余额'}
+					,{field:'discount', title: '折扣'}
+					,{field:'create_time',  width:210,title: '时间', sort: true}
+				]]
+				,id: 'testReload'
+				,page: true
+			});
+			//资金明细
+			table.render({
+				elem: '#contract'
+				,url:"{:cmf_url('adminCapital/ajax')}?user_id="+user_id
+				,toolbar:"#test-table-totalRow-toolbarDemo"
+				,cols: [[
+					{field:'id', width:80, title: 'ID', sort: true}
+					,{field:'change', width:110, title: '变化'}
+					,{field:'balance',width:110, title: '剩余',sort: true}
+					,{field:'description',  title: '备注', sort: true}
+					,{field:'create_time',  width:210,title: '日期', sort: true}
+				]]
+				,id: 'testReload'
+				,page: true
+			});
+
+		})
+	</script>
+	
+</body>
+</html>

@@ -161,9 +161,9 @@ class PayService
             'pay_status'=>1,
             'pay_time'  => time()
         ];
-        $result = DB::name('order')->where("order_id",$order_id)->update($updata);
-        logOrder($order_id,'付款','pay','');
-        $goods = Db::name('order_sub')->field('goods_id,goods_num,sku_id')->where('order_id',$order_id)->select();
+        $result = DB::name('order')->where("order_id",$order['order_id'])->update($updata);
+        logOrder($order['order_id'],'付款','pay','');
+        $goods = Db::name('order_sub')->field('goods_id,goods_num,sku_id')->where('order_id',$order['order_id'])->select();
         if($order['buy_type'] == 0){
             $sku_service = new SkuServer();
             $zu_data = $sku_service->printDates($order['start_time'],$order['end_time']);
