@@ -183,8 +183,10 @@ class AdminGoodsController extends AdminbaseController {
 				$data['is_recommend'] = $this->request->param('post.is_recommend',0,'intval');
 				$data['is_buy'] = $this->request->param('post.is_buy',0,'intval');
 				$data['is_hot'] = $this->request->param('post.is_hot',0,'intval');
-				
+                $data['is_lease'] = $this->request->param('post.is_lease',0,'intval');
+
 				$result=$this->goods_model->edit($data);
+				Db::name('cart')->where('goods_id',$data['goods_id'])->update(['is_buy'=>$data['is_buy'],'is_lease'=>$data['is_lease']]);
 				$this->goods_model->addGoodsSku($data['goods_id']);//添加规格
 				// $this->goods_model->addSpecImg($data['goods_id']);//添加规格图片
 				
