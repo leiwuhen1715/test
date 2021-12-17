@@ -1,20 +1,18 @@
 <include file="public@new_header"/>
 
 <style type="text/css">
-	.dropdown-menu{background: #fff}
-	#photos li{width: 200px;display: inline-block;}
+	#photos li{width: 200px;display: inline-block;overflow: hidden}
 	#photos .photo-p{text-align: center;padding: 10px 0;}
 </style>
 <script type="text/html" id="photos-item-tpl">
-    <li id="saved-image{id}">
-        <input id="photo-{id}" type="hidden" name="post[photo][]" value="{filepath}">
-        <img id="photo-{id}-preview" src="{url}" style="height:200px;width: 200px;"
-             onclick="imagePreviewDialog(this.src);">
-        <p class="photo-p">
-        	<a href="javascript:uploadOneImage('图片上传','#photo-{id}');">替换</a>
-        	<a href="javascript:(function(){$('#saved-image{id}').remove();})();">移除</a>
-        </p>
-    </li>
+	<li id="saved-image{id}">
+		<input id="photo-{id}" type="hidden" name="post[photo][]" value="{filepath}">
+		<img id="photo-{id}-preview" src="{url}" style="height:200px;"
+			 onclick="imagePreviewDialog(this.src);">
+		<p class="photo-p">
+			<a href="javascript:(function(){$('#saved-image{id}').remove();})();">移除</a>
+		</p>
+	</li>
 </script>
 </head>
 
@@ -124,7 +122,7 @@
 			            <label class="layui-form-label">缩略图</label>
 			            <div class="layui-input-block">
 			            	<input type="hidden" name="post[goods_img]" id="thumb" value="">
-			            	<a href="javascript:uploadOneImage('图片上传','#thumb');">
+			            	<a id="goods_thumbnail">
 								<img src="__TMPL__/public/assets/images/default-thumbnail.png" id="thumb-preview" width="135" style="cursor: hand" />
 							</a>
 			              	<input type="button" class="btn btn-small" onclick="$('#thumb-preview').attr('src','__TMPL__/public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
@@ -142,7 +140,7 @@
 			        <div class="layui-tab-item">
 			        	
 				        <ul id="photos" class="pic-list unstyled"></ul>
-				        <div class="layui-upload-drag" onclick="uploadMultiImage('图片上传','#photos','photos-item-tpl');">
+				        <div class="layui-upload-drag" id="goods_photos">
 			              <i class="layui-icon"></i>
 			              <p>点击上传，或将文件拖拽到此处</p>
 			            </div>
@@ -179,11 +177,92 @@
 	
 	<script src="__STATIC__/js/layui/layui.js"></script>
 	<script>
-		
-		layui.use(['form','element','table'], function(){
-		  var form = layui.form
-		  ,element = layui.element
-		  ,table = layui.table;
+
+		var layui_base_url = "__STATIC__/js/layui/extend/";
+		layui.config({
+			base: "__STATIC__/js/layui/",
+		}).extend({
+			croppers:'extend/easyCropper/croppers',
+		});
+		layui.use(['form','element','table','upload','croppers'], function(){
+			var form = layui.form
+					,element = layui.element
+					,table = layui.table
+					,upload = layui.upload
+					,croppers = layui.croppers;
+
+			upload.render({
+				elem: '#goods_thumbnail'
+				,url: '' //此处配置你自己的上传接口即可
+				,auto: false
+				//,multiple: true
+				,bindAction: '#test9'
+				,choose: function(obj){
+					//将每次选择的文件追加到文件队列
+					var files = obj.pushFile();
+
+					//预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+					obj.preview(function(index, file, result){
+						//得到文件索引  index
+						//得到文件对象  file
+						//得到文件base64编码，比如图片  result
+
+						croppers.render({
+							area: ['900px', '600px']  //弹窗宽度
+							,imgUrl: result
+							,url: "{:url('user/asset/webuploader')}"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
+							,saveW:320     //保存宽度
+							,saveH:320     //保存高度
+							,mark:1/1
+							,done: function (result) { //上传完毕回调
+								//更改图片src
+								$("#thumb").val(result.filepath);
+								$("#thumb-preview").attr('src',result.preview_url);
+							}
+						});
+
+					});
+				}
+			});
+			upload.render({
+				elem: '#goods_photos'
+				,url: '' //此处配置你自己的上传接口即可
+				,auto: false
+				//,multiple: true
+				,choose: function(obj){
+					//将每次选择的文件追加到文件队列
+					var files = obj.pushFile();
+
+					//预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+					obj.preview(function(index, file, result){
+						//得到文件索引  index
+						//得到文件对象  file
+						//得到文件base64编码，比如图片  result
+
+						croppers.render({
+							area: ['900px', '600px']  //弹窗宽度
+							,imgUrl: result
+							,url: "{:url('user/asset/webuploader')}"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
+							,mark:75/57
+							,done: function (result) { //上传完毕回调
+								//更改图片src
+
+								var tpl  = $('#photos-item-tpl').html();
+
+								var itemtpl = tpl;
+								itemtpl     = itemtpl.replace(/\{id\}/g, result.id);
+								itemtpl     = itemtpl.replace(/\{url\}/g, result.url);
+								itemtpl     = itemtpl.replace(/\{preview_url\}/g, result.preview_url);
+								itemtpl     = itemtpl.replace(/\{filepath\}/g, result.filepath);
+								itemtpl     = itemtpl.replace(/\{name\}/g, result.name);
+
+								$("#photos").append(itemtpl);
+							}
+						});
+
+					});
+				}
+			});
 		  form.on('select(typeChange)', function(data){
 
 			    $.ajax({

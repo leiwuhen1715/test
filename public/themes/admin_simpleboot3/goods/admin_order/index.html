@@ -5,22 +5,24 @@
         <div class="layui-card">
             <div class="layui-tab layui-tab-brief">
               <ul class="layui-tab-title">
-                <li class="layui-this">
-                  <a href="{:url('AdminOrder/index')}">订单列表</a>
-                </li>
+                    <li class="layui-this"><a href="{:url('index')}">订单列表</a></li>
+                    <li><a href="{:url('add')}">添加订单</a></li>
               </ul>
             </div>
 
             <div class="card-body js-check-wrap">
-              <form class="layui-form form-inline margin-top-20" method="post" action="{:cmf_url('AdminGoods/daochu')}">
+              <form class="layui-form form-inline margin-top-20" method="post" action="{:cmf_url('daochu')}">
                 <div class="demoTable layui-form-item layui-card-header layuiadmin-card-header-auto" style='margin-bottom: 10px'>
                   <!-- 搜索： -->
                   <div class="layui-inline">
-                    <input type="text" class="layui-input" id="keyword_sn" name='keyword_sn' value="" placeholder="搜索订单编号">
+                    <input type="text" class="layui-input" name='keyword_sn' value="" placeholder="搜索订单编号">
                   </div>
                   <div class="layui-inline">
-                    <input type="text" class="layui-input" id="keyword_name" name='keyword_name' value="" placeholder="搜索收货人">
+                    <input type="text" class="layui-input" name='keyword_name' value="" placeholder="搜索收货人">
                   </div>
+                    <div class="layui-inline">
+                        <input type="text" class="layui-input" name='mobile' value="" placeholder="搜索手机">
+                    </div>
                     <div class="layui-inline">
                         <select class="layui-input" name="buy_type">
                             <option value="">订单类型</option>
@@ -115,7 +117,7 @@
 
 	      table.render({
 	        elem: '#test'
-	        ,url:"{:cmf_url('AdminOrder/ajaxorderlist')}"
+	        ,url:"{:cmf_url('ajaxorderlist')}"
 	        ,toolbar:"#test-table-totalRow-toolbarDemo"
 	        ,cols: [[
 	          {field:'order_id', type: 'checkbox'}
@@ -163,7 +165,7 @@
 
 	                    $.ajax({
 	                        type: "get",
-	                        url: "{:cmf_url('AdminOrder/delete')}",
+	                        url: "{:cmf_url('delete')}",
 	                        data: {"id": obj.data.order_id},
 	                        dataType: "json",
 	                        success: function(data) {
@@ -178,7 +180,7 @@
 	                });
 	            } else if(obj.event === 'edit'){
 	                var id = obj.data.order_id
-	                var href = "{:cmf_url('AdminOrder/detail')}?order_id="+id
+	                var href = "{:cmf_url('detail')}?order_id="+id
 	                window.location.href = href
 	            }
 	        });

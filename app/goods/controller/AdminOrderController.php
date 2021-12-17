@@ -45,7 +45,7 @@ class AdminOrderController extends AdminBaseController {
 		$limit          = request()->param('limit',10,'intval');
         $keyword_sn	  	 =	request()->param('keyword_sn');
 		$keyword_name 	 =	request()->param('keyword_name');
-		$supplier_id  	 =  request()->param('supplier_id',0,'intval');
+        $mobile 	     =	request()->param('mobile');
 		$order_status 	 =	request()->param('order_status');
 		$pay_status 	 =  request()->param('pay_status');
 		$shipping_status =  request()->param('shipping_status');
@@ -54,12 +54,12 @@ class AdminOrderController extends AdminBaseController {
 
 
 
-        if($supplier_id)         $where[] = ['supplier_id','=',$supplier_id];
 		if($order_status != '')  $where[] = ['order_status','=',$order_status];
 		if($pay_status != '')    $where[] = ['pay_status','=',$pay_status];
 		if($shipping_status!='') $where[] = ['shipping_status','=',$shipping_status];
         if($send_type != '')     $where[] = ['send_type','=',$send_type];
         if($buy_type != '')      $where[] = ['buy_type','=',$buy_type];
+        if($mobile)              $where[] = ['mobile','like',"%$mobile%"];
         if($keyword_sn)          $where[] = ['order_sn','like',"%$keyword_sn%"];
         if($keyword_name)        $where[] = ['consignee','like',"%$keyword_name%"];
 

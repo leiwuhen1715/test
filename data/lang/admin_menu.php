@@ -104,6 +104,7 @@ return array (
   'ADMIN_USER_USERINFOPOST' => '管理员个人信息修改提交',
   'GOODS_ADMINBRAND_INDEX' => '产品管理',
   'GOODS_ADMINCATEGORY_INDEX' => '分类管理',
+  'GOODS_ADMINEXPRESS_INDEX' => '快递管理',
   'GOODS_ADMINGOODS_INDEX' => '产品列表',
   'GOODS_ADMINORDER_DEFAULT' => '订单管理',
   'GOODS_ADMINORDER_INDEX' => '订单列表',
