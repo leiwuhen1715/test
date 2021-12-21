@@ -339,9 +339,23 @@ class CartLogic extends Relation
         $order_count = Db::name('Order')->where("user_id= $user_id and order_sn like '".date('Ymd')."%'")->count(); // 查找购物车产品总数量
         if($order_count >= 50)return array('status'=>-9,'msg'=>'一天只能下50个订单','result'=>'');*/
 
-        $address = Db::name('UserAddress')->where(["address_id"=>$address_id,'user_id'=>$user_id])->find();
+
         if($send_type == 1){
+            $address = Db::name('UserAddress')->where(["address_id"=>$address_id,'user_id'=>$user_id])->find();
             if(!$address)return array('status'=>-9,'msg'=>'请填写收货地址！','result'=>NULL);
+        }else{
+
+            if(empty($param['consignee']))  return ['status'=>-9,'msg'=>'请填写联系人！','result'=>NULL];
+            if(empty($param['mobile']))     return ['status'=>-9,'msg'=>'请填写手机号！','result'=>NULL];
+            $address = [
+                'consignee' => $param['consignee'],
+                'mobile'    => $param['mobile'],
+                'country'   => 0,
+                'province'  => 0,
+                'city'      => 0,
+                'district'  => 0,
+                'address'   => '',
+            ];
         }
 
         
