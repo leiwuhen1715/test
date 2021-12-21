@@ -33,21 +33,16 @@ class AddressController extends RestBaseController
         $address_id = $this->request->param('id', 0, 'intval');
         if($address_id){
             $address=Db::name('UserAddress')->where(['user_id'=>$userId,'address_id'=>$address_id])->find();
-            if($address){
-
-            }else{
-                $this->success('地址不存在！');
+            if(empty($address)){
+                $this->error('地址不存在！');
             }
         }else{
+            $this->error('地址不存在！');
             $address=Db::name('UserAddress')->where(['user_id'=>$userId,'is_default'=>1])->find();
-            if($address){
-
-            }else{
+            if(empty($address)){
                 $address=Db::name('UserAddress')->where(['user_id'=>$userId])->find();
-                if($address){
-
-                }else{
-                    $this->error('请添加地址');
+                if(empty($address)){
+                    $this->error('请添加地址！');
                 }
             }
         }
