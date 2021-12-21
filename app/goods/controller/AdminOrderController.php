@@ -217,6 +217,13 @@ class AdminOrderController extends AdminBaseController {
                     $updata['shipping_status'] = 2;
                     $updata['confirm_time'] = time();
 
+                    $goods = Db::name('order_sub')->field('goods_id,goods_num,sku_id')->where('order_id',$order['order_id'])->select();
+                    foreach ($goods as $vo){
+                        Db::name('goods')->where('goods_id',$vo['goods_id'])->setDec('lease_num',$vo['goods_num']);
+                        if($vo['sku_id']){
+                            Db::name('goods_sku')->where('sku_id',$vo['sku_id'])->setDec('lease_num',$vo['goods_num']);
+                        }
+                    }
                     break;
 				case 'receive':
 					$updata['shipping_status'] = 2;
@@ -333,6 +340,7 @@ class AdminOrderController extends AdminBaseController {
 	
 	//查看发货单
 	public function ship_detail($order_id){
+
 		$order_id 	 = request()->param('order_id');
 		$order    	 = $this->OrderLogic->orderInfo($order_id);
 		$goods_order = $this->OrderLogic->getGoodsOrder($order_id);

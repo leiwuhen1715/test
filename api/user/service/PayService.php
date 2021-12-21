@@ -171,10 +171,17 @@ class PayService
         foreach ($goods as $value){
             if($order['buy_type'] == 1){
                 Db::name('goods')->where('goods_id',$value['goods_id'])->inc('sales_sum',$value['goods_num'])->dec('store_count',$value['goods_num'])->update();
-                Db::name('goods_sku')->where('sku_id',$value['sku_id'])->inc('sales_sum',$value['goods_num'])->dec('store_count',$value['goods_num'])->update();
-            }else{
+                if($value['sku_id']){
+                    Db::name('goods_sku')->where('sku_id',$value['sku_id'])->inc('sales_sum',$value['goods_num'])->dec('store_count',$value['goods_num'])->update();
+                }
 
+            }else{
+                Db::name('goods')->where('goods_id',$value['goods_id'])->setInc('lease_num',$value['goods_num']);
+                if($value['sku_id']){
+                    Db::name('goods_sku')->where('sku_id',$value['sku_id'])->setInc('lease_num',$value['goods_num']);
+                }
                 foreach ($zu_data as $vo){
+
                     $where = ['goods_id'=>$value['goods_id'],'sku_id'=>$value['sku_id'],'date_time'=>$vo['time']];
                     $count_id = Db::name('goods_count')->where($where)->value('id');
                     if($count_id){

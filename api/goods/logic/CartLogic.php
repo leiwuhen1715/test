@@ -252,13 +252,13 @@ class CartLogic extends Relation
         if($result_sku['status'] == 1){
             $goods_sku = $result_sku['goods_sku'];
             $goods['store_count']     = $goods_sku['store_count'];
+            $goods['lease_num']       = $goods_sku['lease_num'];
             $goods['goods_price']     = $goods_sku['price'];
             $goods['hire_price']      = $goods_sku['hire_price'];
         }
         $time = time();
-        $count = Db::name('goods_count')->where(['goods_id'=>$goods_id,'sku_id'=>$sku_id])->where('date_time','>',$time)->sum('sell_count');
-        if($count > 0){
-            $goods['store_count'] = $goods['store_count']-$count;
+        if($goods['lease_num'] > 0){
+            $goods['store_count'] = $goods['store_count']-$goods['lease_num'];
         }
         if($goods_num > $goods['store_count']){
             return ['status'=>-102,'msg'=>'数量不足,请与客服联系！','result'=>''];
