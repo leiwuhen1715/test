@@ -245,6 +245,12 @@ class CartLogic extends Relation
         if($goods_num <= 0){
             return array('status'=>-2,'msg'=>'购买产品数量不能为0','result'=>'');
         }
+        if($buy_type == 0){
+            if($goods['is_lease'] == 0) return ['status'=>-2,'msg'=>'不可以租赁','result'=>''];
+        }
+        if($buy_type == 1){
+            if($goods['is_buy'] == 0)  return ['status'=>-2,'msg'=>'不可以购买','result'=>''];
+        }
 
         //获取规格
         $result_sku          = $this->getSkuArr($sku_id,$goods_id);

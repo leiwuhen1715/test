@@ -25,7 +25,7 @@ class CartController extends RestBaseController
     public function cartList(){
 
         $userId       = $this->getUserId();
-        $cartLogic = new CartLogic();
+
         $type = request()->param('type',0,'intval');
 
 
@@ -167,12 +167,15 @@ class CartController extends RestBaseController
         $user_id  = $this->getUserId();
         $buy_type = $buy_type=='rent'?0:1;
         
-        $is_buy = Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'is_buy'=>0,'selected'=>1])->value('id');
+
         
         $update = [
             'buy_type' => $buy_type
         ];
         if($buy_type == 0){
+            $is_lease = Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'is_lease'=>0,'selected'=>1])->value('id');
+            if(!empty($is_lease)) $this->error('存在不可租赁产品');
+
             if(empty($param['start_time']))  $this->error('请选择开始时间');
             if(empty($param['end_time']))    $this->error('请选择结束时间');
             $update['start_time'] = strtotime($param['start_time']);
@@ -187,8 +190,9 @@ class CartController extends RestBaseController
                 }
             }
 
-        }else if(!empty($is_buy)){
-            $this->error('存在不可购买产品');
+        }else{
+            $is_buy = Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'is_buy'=>0,'selected'=>1])->value('id');
+            if(!empty($is_buy)) $this->error('存在不可购买产品');
         }
         Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'selected'=>1])->update($update);
         $this->success('ok');
