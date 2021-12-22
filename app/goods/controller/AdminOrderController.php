@@ -2,6 +2,7 @@
 
 namespace app\goods\controller;
 
+use api\goods\service\SkuServer;
 use api\user\service\PayService;
 use app\goods\model\OrderModel;
 use cmf\controller\AdminBaseController;
@@ -149,6 +150,87 @@ class AdminOrderController extends AdminBaseController {
 		$this->assign('order',$order);
 		return $this->fetch();
 	}
+
+	public function time(){
+
+	    $id = request()->param('id',0,'intval');
+	    $order = Db::name('order')->where('order_id',$id)->find();
+        $order_sub = Db::name('order_sub')->where('order_id',$id)->select()->toarray();
+        if(request()->isPost()){
+            $param = request()->param();
+            if(empty($param['start_time']))     $this->error('请选择开始时间');
+            if(empty($param['end_time']))       $this->error('请选择结束时间');
+            if($order['buy_type'] != 0)         $this->error('不是租赁订单');
+            if($order['order_status'] != 1)     $this->error('订单未确认');
+            if($order['shipping_status'] == 2)  $this->error('订单已归还');
+
+            $start_time = strtotime($param['start_time']);
+            $end_time   = strtotime($param['end_time'].' 23:59:59');
+
+            $sku_service = new SkuServer();
+            $new_data = $sku_service->printDates($start_time,$end_time);
+            foreach ($order_sub as $value) {
+                $res_sku = $sku_service->checkCount($value['goods_id'], $value['sku_id'], $start_time, $end_time, $value['goods_num']);
+                if ($res_sku['code'] == 0) {
+                    $this->error($res_sku['msg']);
+                }
+            }
+            Db::startTrans(); //开启事务
+            try {
+                $zu_data = $sku_service->printDates($order['start_time'],$order['end_time']);
+                foreach ($order_sub as $value){
+                    foreach ($zu_data as $vo){
+                        $where = ['goods_id'=>$value['goods_id'],'sku_id'=>$value['sku_id'],'date_time'=>$vo['time']];
+                        Db::name('goods_count')->where($where)->setDec('sell_count',$value['goods_num']);
+                    }
+                }
+                foreach ($order_sub as $value){
+                    $res_sku = $sku_service->checkCount($value['goods_id'],$value['sku_id'],$start_time,$end_time,$value['goods_num']);
+                    if($res_sku['code'] == 0){
+                        throw new \Exception($res_sku['msg']);
+                    }
+                    foreach ($new_data as $vo){
+                        $where = ['goods_id'=>$value['goods_id'],'sku_id'=>$value['sku_id'],'date_time'=>$vo['time']];
+                        $count_id = Db::name('goods_count')->where($where)->value('id');
+                        if($count_id){
+                            Db::name('goods_count')->where('id',$count_id)->setInc('sell_count',$value['goods_num']);
+                        }else{
+                            $where['sell_count'] = $value['goods_num'];
+                            $where['year']       = date("Y",$vo['time']);
+                            $where['month']      = date("m",$vo['time']);
+                            $where['day']        = date("d",$vo['time']);
+                            Db::name('goods_count')->insert($where);
+                        }
+                    }
+                    Db::name('order_sub')->where('rec_id',$value['rec_id'])->update(['start_time'=>$start_time,'end_time'=>$end_time]);
+                }
+                Db::name('order')->where('order_id',$id)->update(['start_time'=>$start_time,'end_time'=>$end_time]);
+                $admin_id = cmf_get_current_admin_id();
+                $msg = '改期：【'.date('Y-m-d',$order['start_time']).'~'.date('Y-m-d',$order['end_time']).'】'.'【'.$param['start_time'].'~'.$param['end_time'].'】';
+
+                logOrder($id,$msg,'update_time',$admin_id);
+                Db::commit();
+            } catch (\Exception $e) {
+                $msg= $e->getMessage();
+                // 回滚事务
+                Db::rollback();
+
+                $this->error($msg);
+            }
+            $this->success('修改成功');
+        }
+
+        $service = new SkuServer();
+        $start_time = strtotime(date("Y-m-d",time()));
+        $end_time   = $start_time+23*24*3600;
+
+        foreach($order_sub as $key=>$vo){
+            $order_sub[$key]['date_time'] = $service->dateCount($vo['goods_id'],$vo['sku_id'],$start_time,$end_time);
+        }
+	    $this->assign('order',$order);
+        $this->assign('order_sub',$order_sub);
+	    return $this->fetch();
+    }
 	
 	//已发货不能编辑
 	private function editable($order){

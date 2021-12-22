@@ -210,7 +210,7 @@ class PayService
                     $where = ['goods_id'=>$value['goods_id'],'sku_id'=>$value['sku_id'],'date_time'=>$vo['time']];
                     $count_id = Db::name('goods_count')->where($where)->value('id');
                     if($count_id){
-                        Db::name('goods_count')->setInc('sell_count',$value['goods_num']);
+                        Db::name('goods_count')->where('id',$count_id)->setInc('sell_count',$value['goods_num']);
                     }else{
                         $where['sell_count'] = $value['goods_num'];
                         $where['year']       = date("Y",$vo['time']);

@@ -1,0 +1,76 @@
+<include file="public@new_header"/>
+<style>
+	.goods_list .layui-form-label{text-align: center}
+</style>
+</head>
+<body>
+	<div class="layui-fluid">
+		<form action="{:url('time')}" class="layui-form js-ajax-form" method="post">
+			<div class="layui-card layui-row" style="padding: 15px;">
+
+				<div class='layui-col-md6'>
+					<div class="layui-form-item">
+						<label class="layui-form-label">租赁时间</label>
+						<div class="layui-input-block">
+							<input type="text" readonly placeholder="" disabled class="layui-input" value="{:date('Y-m-d',$order.start_time)} ~ {:date('Y-m-d',$order.end_time)}">
+						</div>
+					</div>
+					<div class="layui-form-item" id="company-date">
+						<label class="layui-form-label">结束时间</label>
+						<div class="layui-input-inline">
+							<input type="text" name="start_time" autocomplete="off" id="start_time" class="layui-input" value=''>
+						</div>
+						<div class="layui-form-mid">-</div>
+						<div class="layui-input-inline">
+							<input type="text" name="end_time" autocomplete="off" id="end_time" class="layui-input" value=''>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<input type="hidden" name="id" value="{$order.order_id}">
+							<button class="layui-btn js-ajax-submit">立即提交</button>
+						</div>
+					</div>
+				</div>
+				<div class='layui-col-md6'>
+					<div class="layui-card-header"></div>
+					<div class="layui-card-body table-responsive">
+						<table class="layui-hide" id="test" lay-filter="test"></table>
+					</div>
+				</div>
+			</div>
+			<div class="layui-card goods_list">
+				<foreach name="order_sub" item="vo">
+					<div class="layui-card-header">{$vo.goods_name} {$vo.spec_item_name}</div>
+					<div class="layui-card-body table-responsive">
+						<foreach name="vo.date_time" item="v">
+							<div class="layui-form-label">
+								<p>{$v.time_date}</p>
+								<p>剩余：{$v.store_count}</p>
+							</div>
+						</foreach>
+					</div>
+				</foreach>
+			</div>
+		</form>
+	</div>
+
+	<include file="public@scripts"/>
+
+	<script type="text/javascript" src="__STATIC__/js/laydate/laydate.js"></script>
+	<script>
+
+		laydate.render({
+			elem: '#company-date'
+			,trigger:'click'
+			//设置开始日期、日期日期的 input 选择器
+			//数组格式为 5.3.0 开始新增，之前版本直接配置 true 或任意分割字符即可
+			,range: ['#start_time', '#end_time']
+			,done: function(value, date, endDate){
+				console.log(value)
+			}
+		});
+	</script>
+	
+</body>
+</html>
