@@ -59,6 +59,9 @@
 <script type="text/html" id="switchRecom">
    <input type="checkbox" name="is_recommend" value="{{d.goods_id}}" lay-skin="switch" lay-text="是|否" lay-filter="goodsDemo" {{ d.is_recommend == 1 ? 'checked' : '' }}>
 </script>
+<script type="text/html" id="switchLease">
+    <input type="checkbox" name="is_lease" value="{{d.goods_id}}" lay-skin="switch" lay-text="是|否" lay-filter="goodsDemo" {{ d.is_lease == 1 ? 'checked' : '' }}>
+</script>
 
 <script type="text/html" id="test-table-totalRow-toolbarDemo">
   <div class="layui-btn-container">
@@ -92,10 +95,11 @@
           ,{field:'lease_num', width:110, title: '租赁数量', sort: true}
           ,{field:'store_count', width:110, title: '库存', sort: true}
           ,{field:'last_update',  width:210,title: '更新时间', sort: true}
-          ,{field:'is_recommend',  title: '推荐',width:100, templet: '#switchRecom', unresize: true}
           ,{field:'is_buy',  title: '购买',width:100, templet: '#switchTpl1', unresize: true}
+          ,{field:'is_lease',  title: '租赁',width:100, templet: '#switchLease', unresize: true}
+          ,{field:'is_recommend',  title: '推荐',width:100, templet: '#switchRecom', unresize: true}
           ,{field:'is_on_sale',  title: '上架',width:100, templet: '#switchTpl', unresize: true}
-          ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:200}
+          ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:130}
         ]]
         ,id: 'testReload'
         ,page: true

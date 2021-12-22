@@ -226,6 +226,9 @@ class AdminGoodsController extends AdminbaseController {
             $field  = $request->param('field'); // 修改哪个字段
             $value  = $request->param('value'); // 修改字段值
             DB::name('goods')->where("goods_id",$id)->update([$field=>$value]); // 根据条件保存修改的数据
+            if(in_array($field,['is_buy','is_lease'])){
+                Db::name('cart')->where('goods_id',$id)->update([$field=>$value]);
+            }
     }
 	
 	public function add_factory(){

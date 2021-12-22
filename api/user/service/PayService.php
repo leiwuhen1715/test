@@ -50,6 +50,30 @@ class PayService
         $result = '';
         $balance = Db::name('user')->where('id',$data['user_id'])->value('balance');
         if($balance >= $data['total_fee']){
+            $total_fee = $data['total_fee'];
+            $list = Db::name('user_balance')->field('id,balance')->where(['user_id'=>$data['user_id'],'status'=>1])->select();
+            if($list){
+                foreach($list as $vo){
+                    if($vo['balance'] > 0){
+
+                        if($total_fee <= $vo['balance']){
+
+                            if($total_fee == $vo['balance']){
+                                Db::name('user_balance')->where('id',$vo['id'])->update(['status'=>0,'balance'=>0]);
+                            }else{
+                                Db::name('user_balance')->where('id',$vo['id'])->setDec('balance',$vo['balance']);
+                            }
+                            break;
+                        }else{
+                            Db::name('user_balance')->where('id',$vo['id'])->update(['status'=>0,'balance'=>0]);
+                            $total_fee -= $vo['balance'];
+                        }
+
+                    }else{
+                        Db::name('user_balance')->where('id',$vo['id'])->update(['status'=>0]);
+                    }
+                }
+            }
             log_balance_change($data['user_id'],'支付-'.$data['goods_name'],-$data['total_fee']);
             $res_status = $this->pay($data['out_trade_no']);
             $result = 1;
@@ -156,6 +180,7 @@ class PayService
      * 商城支付
      */
     public function shopPay($order_sn){
+
         $order = Db::name('order')->field('order_id,buy_type,start_time,end_time')->where('order_sn',$order_sn)->order('order_id','desc')->find();
         $updata=[
             'pay_status'=>1,

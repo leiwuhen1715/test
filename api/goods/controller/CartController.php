@@ -92,7 +92,7 @@ class CartController extends RestBaseController
         if($result['status']==1){
             $this->success('加入成功!');
         }else{
-            $this->error($result['msg']);
+            $this->error($result['msg'],$result);
 
         }
     }
@@ -172,6 +172,7 @@ class CartController extends RestBaseController
         $update = [
             'buy_type' => $buy_type
         ];
+        $list = Db::name('cart')->field('goods_name,goods_id,sku_id,start_time,end_time,goods_num')->where(['type' => 0,'user_id' => $user_id,'selected'=>1])->select();
         if($buy_type == 0){
             $is_lease = Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'is_lease'=>0,'selected'=>1])->value('id');
             if(!empty($is_lease)) $this->error('存在不可租赁产品');
@@ -180,7 +181,7 @@ class CartController extends RestBaseController
             if(empty($param['end_time']))    $this->error('请选择结束时间');
             $update['start_time'] = strtotime($param['start_time']);
             $update['end_time']   = strtotime($param['end_time'].' 23:59:59');
-            $list = Db::name('cart')->field('goods_id,sku_id,start_time,end_time,goods_num')->where(['type' => 0,'user_id' => $user_id,'selected'=>1])->select();
+
             $service = new SkuServer();
             foreach ($list as $v){
                 $res_sku = $service->checkCount($v['goods_id'],$v['sku_id'],$update['start_time'],$update['end_time'],$v['goods_num']);
@@ -193,6 +194,18 @@ class CartController extends RestBaseController
         }else{
             $is_buy = Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'is_buy'=>0,'selected'=>1])->value('id');
             if(!empty($is_buy)) $this->error('存在不可购买产品');
+
+            foreach ($list as $v){
+                if($v['sku_id']){
+                    $goods = Db::name('goods_sku')->field('store_count,lease_num')->where('sku_id',$v['sku_id'])->find();
+                }else{
+                    $goods = Db::name('goods')->field('store_count,lease_num')->where('goods_id',$v['goods_id'])->find();
+                }
+                $goods['store_count'] = $goods['store_count']-$goods['lease_num'];
+                if($v['goods_num'] > $goods['store_count']){
+                    $this->error($v['goods_name'].'数量不足,请与客服联系！');
+                }
+            }
         }
         Db::name('cart')->where(['type' => 0,'user_id' => $user_id,'selected'=>1])->update($update);
         $this->success('ok');

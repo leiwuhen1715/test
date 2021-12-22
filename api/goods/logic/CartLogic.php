@@ -154,9 +154,8 @@ class CartLogic extends Relation
         return ['status'=>1,'msg'=>'','result'=>['cartList' =>$cartList]];
     }
     public function getTotalPrice($user_id,$type=0,$pay_code = 'wxpay'){
-        
-        $siteInfo = cmf_get_site_info();
-        $discount = $siteInfo['site_discount'];
+
+
         $start_time = $coupon_price = $end_time = $use_day = $buy_type = 0;
         if($type == 0){
             
@@ -217,15 +216,43 @@ class CartLogic extends Relation
         }
         if($pay_code == 'balance'){
             
-            if($discount > 0 && $buy_type == 0){
-                $cut_fee = $cut_fee*$discount/10;
-                $coupon_price = $total_price-$cut_fee;
+            if($buy_type == 0){
+
+                $coupon_price = $this->getCouponPrice($user_id,$total_price);
+                $cut_fee      = $total_price-$coupon_price;
                 
             }
         }
         $result = ['total_fee' => sprintf('%.2f', $total_price),'coupon_price' => $coupon_price, 'cut_fee' => sprintf('%.2f', $cut_fee),'num'=> $anum,'use_day'=>$use_day,'buy_type'=>$buy_type,'start_time'=>$start_time,'end_time'=>$end_time];
 
         return $result;
+    }
+
+    public function getCouponPrice($user_id,$total_price){
+        $coupon_price = 0;
+        $list = Db::name('user_balance')->field('id,discount,balance')->where(['user_id'=>$user_id,'status'=>1])->select();
+        if($list){
+            foreach($list as $vo){
+                if($vo['balance'] > 0){
+                    if($vo['discount'] > 0){
+                        $amount = $total_price*$vo['discount']/10;
+                        if($amount <= $vo['balance']){
+                            $coupon_price += $total_price-$amount;
+                            break;
+                        }else{
+                            $amount = $vo['balance']/(1-($vo['discount']/10));
+                            $total_price -= $amount;
+                            $coupon_price += $vo['balance'];
+                        }
+
+                    }
+                }else{
+                    Db::name('user_balance')->where('id',$vo['id'])->update(['status'=>0]);
+                }
+
+            }
+        }
+        return $coupon_price;
     }
     /**
      * 直接购买
@@ -266,9 +293,12 @@ class CartLogic extends Relation
         if($goods['lease_num'] > 0){
             $goods['store_count'] = $goods['store_count']-$goods['lease_num'];
         }
-        if($goods_num > $goods['store_count']){
-            return ['status'=>-102,'msg'=>'数量不足,请与客服联系！','result'=>''];
+        if($buy_type == 1){
+            if($goods_num > $goods['store_count']){
+                return ['status'=>-102,'msg'=>'数量不足,请与客服联系！','result'=>$goods];
+            }
         }
+
         $goods['buy_num'] = $goods_num;
         $data = [
             'user_id'          => $user_id,   // 用户id
@@ -435,16 +465,14 @@ class CartLogic extends Relation
                     }
                     $s_goods['goods_price'] = $s_goods['hire_price'];
                 }else{
+
                     if($s_goods['sku_id'] > 0){
-                        $store_count = Db::name('goods_sku')->where(['goods_id'=>$s_goods['goods_id'],'sku_id'=>$s_goods['sku_id']])->value('store_count');
+                        $goods = Db::name('goods_sku')->field('store_count,lease_num')->where(['goods_id'=>$s_goods['goods_id'],'sku_id'=>$s_goods['sku_id']])->find();
                     }else{
-                        $store_count = Db::name('goods')->where('goods_id',$s_goods['goods_id'])->value('store_count');
+                        $goods = Db::name('goods')->field('store_count,lease_num')->where('goods_id',$s_goods['goods_id'])->find();
                     }
-                    
-                    $count = Db::name('goods_count')->where(['goods_id'=>$s_goods['goods_id'],'sku_id'=>$s_goods['sku_id']])->where('date_time','>',$time)->sum('sell_count');
-                    if($count > 0){
-                        $store_count = $store_count-$count;
-                    }
+
+                    $store_count = $goods['store_count']-$goods['lease_num'];
                     if($store_count < $s_goods['goods_num']){
                         throw new \Exception($s_goods['goods_name'].'库存不足，请与客服联系');
                     }
@@ -476,15 +504,11 @@ class CartLogic extends Relation
                     }else{
                     
                         if($v['sku_id'] > 0){
-                            $store_count = Db::name('goods_sku')->where(['goods_id'=>$v['goods_id'],'sku_id'=>$v['sku_id']])->value('store_count');
+                            $goods = Db::name('goods_sku')->field('store_count,lease_num')->where(['goods_id'=>$v['goods_id'],'sku_id'=>$v['sku_id']])->find();
                         }else{
-                            $store_count = Db::name('goods')->where('goods_id',$v['goods_id'])->value('store_count');
+                            $goods = Db::name('goods')->field('store_count,lease_num')->where('goods_id',$v['goods_id'])->find();
                         }
-                        
-                        $count = Db::name('goods_count')->where(['goods_id'=>$v['goods_id'],'sku_id'=>$v['sku_id']])->where('date_time','>',$time)->sum('sell_count');
-                        if($count > 0){
-                            $store_count = $store_count-$count;
-                        }
+                        $store_count = $goods['store_count']-$goods['lease_num'];
                         if($store_count < $v['goods_num']){
                             throw new \Exception($v['goods_name'].'库存不足，请与客服联系');
                         }
@@ -536,17 +560,35 @@ class CartLogic extends Relation
 
         return ['status'=>1,'msg'=>'','result'=>$count];
     }
+    /**
+     * @param $user_id
+     * @param int $mode
+     * @param int $type
+     * @return array|float|int|string
+     */
+    public function checkStock($goods_id,$sku_id,$buy_type=0,$start_time=0,$end_time=0){
+        if($buy_type == 0){
+
+        }else{
+
+        }
+    }
+    //检测租赁库存
     public function buy_count($user_id,$mode = 0,$type = 0){
         $where=[
-            'user_id'=>$user_id
+            'user_id' => $user_id,
+            'type'    => $type
         ];
-        $where['type'] = $type == 0?0:1;
 
+        if($type == 0){
+            $where['selected'] = 1;
+        }
         $count = Db::name('Cart')->where($where)->count();
         if($mode == 1) return  $count;
 
         return ['status'=>1,'msg'=>'','result'=>$count];
     }
+
     public function getSkuArr($sku_id,$goods_id){
 
         $result = ['status'=>0,'msg'=>''];
